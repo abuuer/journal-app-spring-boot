@@ -6,7 +6,7 @@
 package com.journal.journal.security.jwt;
 
 
-import com.journal.journal.service.impl.UserDetailsImpl;
+import com.journal.journal.bean.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;

@@ -17,7 +17,7 @@ import javax.persistence.ManyToOne;
  * @author anoir
  */
 @Entity
-public class ArticleTags implements Serializable {
+public class ArticleTagsDetail implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -26,9 +26,14 @@ public class ArticleTags implements Serializable {
     @ManyToOne
     private Article article;
     @ManyToOne
-    private Tags tag;
+    private Tag tag;
 
-    public ArticleTags() {
+    public ArticleTagsDetail() {
+    }
+
+    public ArticleTagsDetail(Article article, Tag tag) {
+        this.article = article;
+        this.tag = tag;
     }
 
     public Article getArticle() {
@@ -39,11 +44,11 @@ public class ArticleTags implements Serializable {
         this.article = article;
     }
 
-    public Tags getTag() {
+    public Tag getTag() {
         return tag;
     }
 
-    public void setTag(Tags tag) {
+    public void setTag(Tag tag) {
         this.tag = tag;
     }
     
@@ -65,10 +70,10 @@ public class ArticleTags implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ArticleTags)) {
+        if (!(object instanceof ArticleTagsDetail)) {
             return false;
         }
-        ArticleTags other = (ArticleTags) object;
+        ArticleTagsDetail other = (ArticleTagsDetail) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

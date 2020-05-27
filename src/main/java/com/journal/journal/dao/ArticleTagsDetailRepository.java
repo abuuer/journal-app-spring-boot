@@ -5,10 +5,7 @@
  */
 package com.journal.journal.dao;
 
-import com.journal.journal.bean.User;
-import com.journal.journal.bean.UserArticleDetail;
-import java.util.List;
-import java.util.Optional;
+import com.journal.journal.bean.ArticleTagsDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,10 +14,6 @@ import org.springframework.stereotype.Repository;
  * @author anoir
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-
-    Optional<User> findByEmail(String email);
-
-    boolean existsByEmail(String email);
+public interface ArticleTagsDetailRepository extends JpaRepository<ArticleTagsDetail, Long>{
     
 }

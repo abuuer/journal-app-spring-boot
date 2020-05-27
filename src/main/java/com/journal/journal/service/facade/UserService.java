@@ -6,7 +6,10 @@
 package com.journal.journal.service.facade;
 
 import com.journal.journal.bean.User;
+import com.journal.journal.security.payload.request.LoginRequest;
+import com.journal.journal.security.payload.request.SignupRequest;
 import java.util.Optional;
+import org.springframework.http.ResponseEntity;
 
 /**
  *
@@ -15,9 +18,13 @@ import java.util.Optional;
 public interface UserService {
 
     Optional<User> findByEmail(String email);
-
+    
     boolean existsByEmail(String email);
     
     int save(User user);
     
+    public ResponseEntity<?> authenticateUser(LoginRequest loginRequest);
+  
+    public ResponseEntity<?> registerUser(SignupRequest signUpRequest);
+
 }

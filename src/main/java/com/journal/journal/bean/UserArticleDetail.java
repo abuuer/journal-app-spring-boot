@@ -5,6 +5,7 @@
  */
 package com.journal.journal.bean;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,18 +24,16 @@ public class UserArticleDetail implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String authorRole;
     @ManyToOne
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private User author;
-    
     @ManyToOne
     private Article article;
 
     public UserArticleDetail() {
     }
 
-    public UserArticleDetail(String authorRole, User author, Article article) {
-        this.authorRole = authorRole;
+    public UserArticleDetail(User author, Article article) {
         this.author = author;
         this.article = article;
     }
@@ -45,14 +44,6 @@ public class UserArticleDetail implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getAuthorRole() {
-        return authorRole;
-    }
-
-    public void setAuthorRole(String authorRole) {
-        this.authorRole = authorRole;
     }
 
     public User getAuthor() {
@@ -95,5 +86,5 @@ public class UserArticleDetail implements Serializable {
     public String toString() {
         return "com.journal.journal.bean.UserArticleDetail[ id=" + id + " ]";
     }
-    
+
 }

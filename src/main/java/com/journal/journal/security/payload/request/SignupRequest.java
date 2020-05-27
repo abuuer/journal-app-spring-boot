@@ -39,6 +39,9 @@ public class SignupRequest {
 
     private List<String> role;
 
+    public SignupRequest() {
+    }
+
     public String getFirstName() {
         return firstName;
     }

@@ -5,6 +5,7 @@
  */
 package com.journal.journal.bean;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
@@ -49,6 +50,8 @@ public class User implements Serializable {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "user")
     private List<UserRoleDetail> userRoleDetails;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(mappedBy = "author")
     private List<UserArticleDetail> userArticleDetails;
 

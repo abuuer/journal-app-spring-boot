@@ -7,6 +7,7 @@ package com.journal.journal.ws.rest;
 
 import com.journal.journal.bean.Article;
 import com.journal.journal.service.facade.ArticleService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;

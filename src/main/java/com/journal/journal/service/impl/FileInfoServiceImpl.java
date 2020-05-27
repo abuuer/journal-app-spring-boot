@@ -156,4 +156,9 @@ public class FileInfoServiceImpl implements FileInfoService {
     public void save(FileInfo file) {
         fileInfoRepository.save(file);
     }
+
+    @Override
+    public FileInfo findByReference(String reference) {
+        return fileInfoRepository.findByReference(reference);
+    }
 }

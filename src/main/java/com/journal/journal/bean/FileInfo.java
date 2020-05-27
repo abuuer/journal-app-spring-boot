@@ -25,6 +25,7 @@ public class FileInfo implements Serializable {
     private Long id;
     private String name;
     private String url;
+    private String reference ;
 
     @ManyToOne
     private Article article;
@@ -35,6 +36,14 @@ public class FileInfo implements Serializable {
     public FileInfo(String name, String url) {
         this.name = name;
         this.url = url;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
     public String getName() {

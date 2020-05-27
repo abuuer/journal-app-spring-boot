@@ -18,25 +18,25 @@ import javax.persistence.OneToMany;
  * @author anoir
  */
 @Entity
-public class Tags implements Serializable {
+public class Tag implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String tags ;
+    private String name ;
 //    @OneToMany(mappedBy = "tag")
 //    private List<ArticleTags> articleTagss;
 
-    public Tags() {
+    public Tag() {
     }
 
-    public String getTags() {
-        return tags;
+    public String getName() {
+        return name;
     }
 
-    public void setTags(String tags) {
-        this.tags = tags;
+    public void setName(String name) {
+        this.name = name;
     }
     
     
@@ -59,10 +59,10 @@ public class Tags implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Tags)) {
+        if (!(object instanceof Tag)) {
             return false;
         }
-        Tags other = (Tags) object;
+        Tag other = (Tag) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

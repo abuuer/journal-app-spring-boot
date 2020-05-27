@@ -5,9 +5,16 @@
  */
 package com.journal.journal.ws.rest;
 
+import com.journal.journal.bean.Article;
+import com.journal.journal.bean.User;
+import com.journal.journal.bean.UserArticleDetail;
+import com.journal.journal.service.facade.UserArticleDetailService;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/journal-api/test")
 public class TestController {
 
+    
     @GetMapping("/all")
     public String allAccess() {
         return "Public Content.";

@@ -20,8 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
  * @author anoir
  */
 public interface FileInfoService {
-    
- 
+
+    FileInfo findByReference(String reference);
 
     public void save(FileInfo file);
 

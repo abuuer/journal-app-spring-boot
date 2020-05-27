@@ -6,16 +6,17 @@
 package com.journal.journal.service.facade;
 
 import com.journal.journal.bean.Article;
+import com.journal.journal.bean.User;
+import com.journal.journal.bean.UserArticleDetail;
 import java.util.List;
 
 /**
  *
  * @author anoir
  */
-public interface ArticleService {
-    
-    public int save(Article article);
-    
-    public List<Article> findAll();
-    
+public interface UserArticleDetailService {
+
+    void save(UserArticleDetail userArticleDetail);
+
+    List<UserArticleDetail> findByAuthor_Id(Long id);
 }

@@ -5,6 +5,7 @@
  */
 package com.journal.journal.bean;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Entity;
@@ -29,18 +30,25 @@ public class Article implements Serializable {
     private String title;
     private String abstractt;
     private boolean funding;
-    private String funder; 
+    private String funder;
     private Double amount;
+    private String status;
+
     @OneToMany(mappedBy = "article")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<FileInfo> fileInfos;
+
     @OneToMany(mappedBy = "article")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<UserArticleDetail> userArticleDetails;
+
     @OneToMany(mappedBy = "article")
-    private List<ArticleTags> articleTags;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private List<ArticleTagsDetail> articleTags;
 
     public Article() {
+        this.status = "pending";
     }
-    
 
     public Long getId() {
         return id;
@@ -48,6 +56,30 @@ public class Article implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public List<UserArticleDetail> getUserArticleDetails() {
+        return userArticleDetails;
+    }
+
+    public void setUserArticleDetails(List<UserArticleDetail> userArticleDetails) {
+        this.userArticleDetails = userArticleDetails;
+    }
+
+    public List<ArticleTagsDetail> getArticleTags() {
+        return articleTags;
+    }
+
+    public void setArticleTags(List<ArticleTagsDetail> articleTags) {
+        this.articleTags = articleTags;
     }
 
     public String getDoi() {

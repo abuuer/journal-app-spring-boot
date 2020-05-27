@@ -5,17 +5,13 @@
  */
 package com.journal.journal.service.facade;
 
-import com.journal.journal.bean.ERole;
-import com.journal.journal.bean.Role;
-import java.util.Optional;
+import com.journal.journal.bean.ArticleTagsDetail;
 
 /**
  *
  * @author anoir
  */
-public interface RoleService {
-
-    int save(Role role);
-
-    Optional<Role> findByName(ERole name);
+public interface ArticleTagsDetailService {
+    
+    void save (ArticleTagsDetail articleTagsDetail);
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.journal.journal.service.impl;
+package com.journal.journal.bean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.journal.journal.bean.User;
