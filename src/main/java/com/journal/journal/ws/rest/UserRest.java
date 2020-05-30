@@ -5,12 +5,14 @@
  */
 package com.journal.journal.ws.rest;
 
+import com.journal.journal.bean.User;
 import com.journal.journal.bean.UserArticleDetail;
 import com.journal.journal.security.payload.request.LoginRequest;
 import com.journal.journal.security.payload.request.SignupRequest;
 import com.journal.journal.service.facade.UserArticleDetailService;
 import com.journal.journal.service.facade.UserService;
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -45,5 +47,12 @@ public class UserRest {
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         return userService.registerUser(signUpRequest);
     }
+
+    @GetMapping("/email/{email}")
+    public Optional<User> findByEmail(@PathVariable String email) {
+        return userService.findByEmail(email);
+    }
+    
+    
 
 }

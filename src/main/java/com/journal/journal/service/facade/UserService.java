@@ -17,14 +17,16 @@ import org.springframework.http.ResponseEntity;
  */
 public interface UserService {
 
+    Optional<User> findById(Long id);
+
     Optional<User> findByEmail(String email);
-    
+
     boolean existsByEmail(String email);
-    
+
     int save(User user);
-    
+
     public ResponseEntity<?> authenticateUser(LoginRequest loginRequest);
-  
+
     public ResponseEntity<?> registerUser(SignupRequest signUpRequest);
 
 }

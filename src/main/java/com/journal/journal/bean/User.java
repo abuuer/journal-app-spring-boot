@@ -54,6 +54,8 @@ public class User implements Serializable {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(mappedBy = "author")
     private List<UserArticleDetail> userArticleDetails;
+    @OneToMany(mappedBy = "user")
+    private List<UserSpecialtyDetail> userSpecialtyDetails;
 
     public User() {
     }
@@ -84,6 +86,22 @@ public class User implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<UserArticleDetail> getUserArticleDetails() {
+        return userArticleDetails;
+    }
+
+    public void setUserArticleDetails(List<UserArticleDetail> userArticleDetails) {
+        this.userArticleDetails = userArticleDetails;
+    }
+
+    public List<UserSpecialtyDetail> getUserSpecialtyDetails() {
+        return userSpecialtyDetails;
+    }
+
+    public void setUserSpecialtyDetails(List<UserSpecialtyDetail> userSpecialtyDetails) {
+        this.userSpecialtyDetails = userSpecialtyDetails;
     }
 
     public List<UserRoleDetail> getUserRoleDetails() {

@@ -5,10 +5,9 @@
  */
 package com.journal.journal.ws.rest;
 
-import com.journal.journal.bean.Article;
+import com.journal.journal.bean.Tag;
 import com.journal.journal.bean.User;
-import com.journal.journal.bean.UserArticleDetail;
-import com.journal.journal.service.facade.UserArticleDetailService;
+import com.journal.journal.service.facade.UserSpecialtyDetailService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,11 +22,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/journal-api/test")
 public class TestController {
 
+    @Autowired
+    private UserSpecialtyDetailService userSpecialtyDetailService;
+
+    @GetMapping("/id/{id}")
+    public List<Tag> findTagByUserId(@PathVariable Long id) {
+        System.out.println(id);
+        return userSpecialtyDetailService.findTagByUserId(id);
+    }
+
+    
+    
     
     @GetMapping("/all")
     public String allAccess() {
         return "Public Content.";
     }
+
+    
 
     @GetMapping("/user")
     @PreAuthorize("hasRole('USER') or hasRole('AUTHOR') or hasRole('EDITOR') or hasRole('REVIEWER')")

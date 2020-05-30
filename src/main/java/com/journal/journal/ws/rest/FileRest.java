@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.journal.journal.service.facade.FileInfoService;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  *
@@ -33,9 +34,9 @@ public class FileRest {
     @Autowired
     private FileInfoService fileService;
 
-    @PostMapping("/upload")
-    public ResponseEntity<ResponseMessage> uploadFiles(@RequestParam("files") MultipartFile[] files) {
-        return fileService.uploadFiles(files);
+    @PostMapping("/upload/type/{fileType}")
+    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("files") MultipartFile file,@PathVariable String fileType) {
+        return fileService.uploadFile(file, fileType);
     }
 
     @GetMapping("/files")
@@ -47,6 +48,11 @@ public class FileRest {
     @GetMapping("/files/{filename:.+}")
     public ResponseEntity<Resource> getFile(@PathVariable String filename) {
         return fileService.getFile(filename);
+    }
+
+    @PostMapping("/save")
+    public void save(@RequestBody FileInfo file) {
+        fileService.save(file);
     }
 
 }

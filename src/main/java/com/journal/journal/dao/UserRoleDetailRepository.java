@@ -5,7 +5,9 @@
  */
 package com.journal.journal.dao;
 
+import com.journal.journal.bean.ERole;
 import com.journal.journal.bean.UserRoleDetail;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +18,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRoleDetailRepository extends JpaRepository<UserRoleDetail, Long> {
 
+    List<UserRoleDetail> findByUser_Id(Long id);
+    
+    List<UserRoleDetail> findByRole_Name(ERole name);
 }

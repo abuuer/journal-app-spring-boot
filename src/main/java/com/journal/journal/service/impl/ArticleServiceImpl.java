@@ -11,6 +11,7 @@ import com.journal.journal.bean.FileInfo;
 import com.journal.journal.bean.Tag;
 import com.journal.journal.bean.User;
 import com.journal.journal.bean.UserArticleDetail;
+import com.journal.journal.bean.UserSpecialtyDetail;
 import com.journal.journal.dao.ArticleRepository;
 import com.journal.journal.service.facade.ArticleService;
 import com.journal.journal.service.facade.ArticleTagsDetailService;
@@ -21,6 +22,8 @@ import com.journal.journal.service.facade.FileInfoService;
 import com.journal.journal.service.facade.TagService;
 import com.journal.journal.service.facade.UserArticleDetailService;
 import com.journal.journal.service.facade.UserService;
+import com.journal.journal.service.facade.UserSpecialtyDetailService;
+import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -44,16 +47,18 @@ public class ArticleServiceImpl implements ArticleService {
     private UserService userService;
     @Autowired
     private UserArticleDetailService userArticleDetailService;
+    @Autowired
+    private UserSpecialtyDetailService userSpecialtyDetailService;
 
     @Override
     public int save(Article article) {
-        Article farticle = articleRepository.findByDoi(article.getDoi());
-
+        Article farticle = articleRepository.findByReference(article.getReference());
+        List<Tag> tags = new ArrayList<>();
         if (farticle != null) {
             return -1;
         } else {
             articleRepository.save(article);
-            for (FileInfo fileInfo : article.getFileInfos()) {
+               for (FileInfo fileInfo : article.getFileInfos()) {
                 FileInfo foundedFile = fileService.findByReference(fileInfo.getReference());
                 if (foundedFile == null) {
                     System.out.println("foundedFile == null");
@@ -64,6 +69,7 @@ public class ArticleServiceImpl implements ArticleService {
             }
             for (ArticleTagsDetail articleTagsDetail : article.getArticleTags()) {
                 Tag tag = tagService.findByName(articleTagsDetail.getTag().getName());
+                tags.add(tag);
                 if (tag == null) {
                     tagService.save(articleTagsDetail.getTag());
                     ArticleTagsDetail newAT = new ArticleTagsDetail(article, articleTagsDetail.getTag());
@@ -76,8 +82,15 @@ public class ArticleServiceImpl implements ArticleService {
             if (article.getUserArticleDetails() != null) {
                 for (UserArticleDetail userArticleDetail : article.getUserArticleDetails()) {
                     Optional<User> fUser = userService.findByEmail(userArticleDetail.getAuthor().getEmail());
+                    // save user speacialty from article submission
+                    List<Tag> s = userSpecialtyDetailService.findTagByUserId(fUser.get().getId());
+                    for (Tag tag : tags) {
+                        if(!s.contains(tag)){
+                            UserSpecialtyDetail usd = new UserSpecialtyDetail(fUser.get(), tag);
+                            userSpecialtyDetailService.save(usd);
+                        }
+                    }
                     if (!fUser.isPresent()) {
-                        System.out.println(userArticleDetail.getAuthor());
                         userService.save(userArticleDetail.getAuthor());
                         UserArticleDetail uad = new UserArticleDetail(userArticleDetail.getAuthor(), article);
                         userArticleDetailService.save(uad);

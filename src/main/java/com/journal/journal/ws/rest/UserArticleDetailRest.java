@@ -31,7 +31,7 @@ public class UserArticleDetailRest {
     private UserArticleDetailService userArticleDetailService;
 
     @GetMapping("/id/{id}")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_AUTHOR')")
+   // @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_AUTHOR')")
     public List<UserArticleDetail> findByAuthor_Id(@PathVariable Long id) {
         return userArticleDetailService.findByAuthor_Id(id);
     }

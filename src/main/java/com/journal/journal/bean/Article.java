@@ -7,12 +7,14 @@ package com.journal.journal.bean;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
 
 /**
  *
@@ -25,7 +27,7 @@ public class Article implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String doi;
+    private String reference;
     private String type;
     private String title;
     private String abstractt;
@@ -33,21 +35,21 @@ public class Article implements Serializable {
     private String funder;
     private Double amount;
     private String status;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date submitDate;
 
     @OneToMany(mappedBy = "article")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<FileInfo> fileInfos;
 
     @OneToMany(mappedBy = "article")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<UserArticleDetail> userArticleDetails;
 
     @OneToMany(mappedBy = "article")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<ArticleTagsDetail> articleTags;
 
     public Article() {
         this.status = "pending";
+        this.submitDate = new Date();
     }
 
     public Long getId() {
@@ -82,12 +84,12 @@ public class Article implements Serializable {
         this.articleTags = articleTags;
     }
 
-    public String getDoi() {
-        return doi;
+    public String getReference() {
+        return reference;
     }
 
-    public void setDoi(String doi) {
-        this.doi = doi;
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
     public List<FileInfo> getFileInfos() {

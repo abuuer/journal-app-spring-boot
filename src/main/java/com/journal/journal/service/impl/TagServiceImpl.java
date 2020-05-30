@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
  * @author anoir
  */
 @Service
-public class TagsServiceImpl implements TagService{
+public class TagServiceImpl implements TagService{
 
     @Autowired
     private TagRepository tagRepository;

@@ -5,7 +5,9 @@
  */
 package com.journal.journal.dao;
 
-import com.journal.journal.bean.FileInfo;
+import com.journal.journal.bean.User;
+import com.journal.journal.bean.UserSpecialtyDetail;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,9 +16,8 @@ import org.springframework.stereotype.Repository;
  * @author anoir
  */
 @Repository
-public interface FileInfoRepository extends JpaRepository<FileInfo, Long> {
-    
-    FileInfo findByReference(String reference);
-    
-    FileInfo findByUrl(String url);
+public interface UserSpecialtyDetailRepository extends JpaRepository<UserSpecialtyDetail, Long> {
+
+    List<UserSpecialtyDetail> findByUser(User user);
+
 }

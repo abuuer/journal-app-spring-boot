@@ -13,8 +13,6 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,8 +30,7 @@ import org.springframework.util.FileSystemUtils;
 import com.journal.journal.service.facade.FileInfoService;
 import com.journal.journal.ws.rest.FileRest;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Random;
 
 /**
  *
@@ -87,20 +84,21 @@ public class FileInfoServiceImpl implements FileInfoService {
     }
 
     @Override
-    public ResponseEntity<ResponseMessage> uploadFiles(MultipartFile[] files) {
+    public ResponseEntity<ResponseMessage> uploadFile(MultipartFile file, String fileType) {
         String message = "";
         try {
-            List<String> fileNames = new ArrayList<>();
-            Arrays.asList(files).stream().forEach(file -> {
-                storeFile(file);
-                fileNames.add(file.getOriginalFilename());
-                Resource currentfile = loadFile(file.getOriginalFilename());
-                //MvcUriComponentsBuilder used tp generate url
-                String url = MvcUriComponentsBuilder.fromMethodName(FileRest.class, "getFile", currentfile.getFilename()).build().toString();
-                FileInfo newFile = new FileInfo(currentfile.getFilename(), url);
-                saveInfo(newFile);
-            });
-            message = "Uploaded the files successfully: " + fileNames;
+            String fileName;
+
+            storeFile(file);
+            fileName = file.getOriginalFilename();
+            Resource currentfile = loadFile(file.getOriginalFilename());
+            //MvcUriComponentsBuilder used tp generate url
+            String url = MvcUriComponentsBuilder.fromMethodName(FileRest.class, "getFile",
+                     randomeString() + "_" + currentfile.getFilename() + "_" + randomeString()).build().toString();
+            FileInfo newFile = new FileInfo(currentfile.getFilename(), url, fileType);
+            saveInfo(newFile);
+
+            message = "Uploaded the files successfully: " + fileName;
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
         } catch (Exception e) {
             message = "Fail to upload files!";
@@ -123,7 +121,8 @@ public class FileInfoServiceImpl implements FileInfoService {
         List<FileInfo> fileInfos = loadAll().map(path -> {
             String filename = path.getFileName().toString();
             String url = MvcUriComponentsBuilder.fromMethodName(FileRest.class, "getFile", path.getFileName().toString()).build().toString();
-            return new FileInfo(filename, url);
+            FileInfo f = fileInfoRepository.findByUrl(url);
+            return new FileInfo(filename, url, f.getType());
         }).collect(Collectors.toList());
         return ResponseEntity.status(HttpStatus.OK).body(fileInfos);
     }
@@ -138,13 +137,12 @@ public class FileInfoServiceImpl implements FileInfoService {
 
     @Override
     public int saveInfo(FileInfo file) {
-        Optional<FileInfo> foundedFile = fileInfoRepository.findById(file.getId());
-        if(foundedFile.isPresent()){
-            return -1;
-        } else {
-            fileInfoRepository.save(file);
-            return 1;
-        }
+        fileInfoRepository.save(file);
+        Optional<FileInfo> f = fileInfoRepository.findById(file.getId());
+        f.get().setReference("ref" + file.getId());
+        fileInfoRepository.save(f.get());
+        return 1;
+
     }
 
     @Override
@@ -160,5 +158,20 @@ public class FileInfoServiceImpl implements FileInfoService {
     @Override
     public FileInfo findByReference(String reference) {
         return fileInfoRepository.findByReference(reference);
+    }
+
+    public String randomeString() {
+        int leftLimit = 48; // numeral '0'
+        int rightLimit = 122; // letter 'z'
+        int targetStringLength = 5;
+        Random random = new Random();
+
+        String generatedString = random.ints(leftLimit, rightLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+
+        return generatedString;
     }
 }

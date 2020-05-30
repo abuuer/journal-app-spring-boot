@@ -39,7 +39,7 @@ public interface FileInfoService {
 
     public void deleteAll();
 
-    public ResponseEntity<ResponseMessage> uploadFiles(MultipartFile[] files);
+    public ResponseEntity<ResponseMessage> uploadFile(MultipartFile file, String fileType);
 
     public ResponseEntity<List<FileInfo>> getListFiles();
 

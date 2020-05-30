@@ -5,6 +5,7 @@
  */
 package com.journal.journal.security.payload.request;
 
+import com.journal.journal.bean.Tag;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 
@@ -38,8 +39,17 @@ public class SignupRequest {
     private String instPhone;
 
     private List<String> role;
+    private List<String> specialty;
 
     public SignupRequest() {
+    }
+
+    public List<String> getSpecialty() {
+        return specialty;
+    }
+
+    public void setSpecialty(List<String> specialty) {
+        this.specialty = specialty;
     }
 
     public String getFirstName() {
@@ -162,7 +172,6 @@ public class SignupRequest {
         this.instPhone = instPhone;
     }
 
-    
     public String getEmail() {
         return email;
     }

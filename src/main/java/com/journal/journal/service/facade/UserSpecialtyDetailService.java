@@ -5,23 +5,20 @@
  */
 package com.journal.journal.service.facade;
 
-import com.journal.journal.bean.ERole;
+import com.journal.journal.bean.Tag;
 import com.journal.journal.bean.User;
-import com.journal.journal.bean.UserRoleDetail;
+import com.journal.journal.bean.UserSpecialtyDetail;
 import java.util.List;
 
 /**
  *
  * @author anoir
  */
-public interface UserRoleDetailService {
+public interface UserSpecialtyDetailService {
 
-    int save(UserRoleDetail userRoleDetail);
+    List<UserSpecialtyDetail> findByUser(User user);
 
-    List<UserRoleDetail> findByUser_Id(Long id);
+    List<Tag> findTagByUserId(Long id);
 
-    List<UserRoleDetail> findByRole_Name(ERole name);
-
-    List<User> findAllReviewers();
-
+    void save(UserSpecialtyDetail userSpecialtyDetail);
 }

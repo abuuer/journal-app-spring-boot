@@ -5,6 +5,7 @@
  */
 package com.journal.journal.bean;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,17 +26,28 @@ public class FileInfo implements Serializable {
     private Long id;
     private String name;
     private String url;
-    private String reference ;
+    private String reference;
+    private String type;
 
     @ManyToOne
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Article article;
 
     public FileInfo() {
     }
 
-    public FileInfo(String name, String url) {
+    public FileInfo(String name, String url, String type) {
         this.name = name;
         this.url = url;
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getReference() {
@@ -100,7 +112,7 @@ public class FileInfo implements Serializable {
 
     @Override
     public String toString() {
-        return "com.journal.journal.bean.FileInfo[ id=" + id + " ]";
+        return "FileInfo{" + "id=" + id + ", name=" + name + ", url=" + url + ", reference=" + reference + '}';
     }
 
 }

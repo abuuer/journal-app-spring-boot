@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package com.journal.journal.bean;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import javax.persistence.Entity;
@@ -17,32 +18,26 @@ import javax.persistence.ManyToOne;
  * @author anoir
  */
 @Entity
-public class ArticleTagsDetail implements Serializable {
+public class UserSpecialtyDetail implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @ManyToOne
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Article article;
+    @ManyToOne
+    private User user;
+
     @ManyToOne
     private Tag tag;
 
-    public ArticleTagsDetail() {
+    public UserSpecialtyDetail() {
     }
 
-    public ArticleTagsDetail(Article article, Tag tag) {
-        this.article = article;
+    public UserSpecialtyDetail(User user, Tag tag) {
+        this.user = user;
         this.tag = tag;
-    }
-
-    public Article getArticle() {
-        return article;
-    }
-
-    public void setArticle(Article article) {
-        this.article = article;
     }
 
     public Tag getTag() {
@@ -52,13 +47,21 @@ public class ArticleTagsDetail implements Serializable {
     public void setTag(Tag tag) {
         this.tag = tag;
     }
-    
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
@@ -71,10 +74,10 @@ public class ArticleTagsDetail implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ArticleTagsDetail)) {
+        if (!(object instanceof UserSpecialtyDetail)) {
             return false;
         }
-        ArticleTagsDetail other = (ArticleTagsDetail) object;
+        UserSpecialtyDetail other = (UserSpecialtyDetail) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -83,7 +86,7 @@ public class ArticleTagsDetail implements Serializable {
 
     @Override
     public String toString() {
-        return "com.journal.journal.bean.ArticleTags[ id=" + id + " ]";
+        return "com.journal.journal.bean.UserSpecialtyDetail[ id=" + id + " ]";
     }
-    
+
 }
