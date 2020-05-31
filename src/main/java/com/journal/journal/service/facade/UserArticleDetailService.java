@@ -18,5 +18,7 @@ public interface UserArticleDetailService {
 
     void save(UserArticleDetail userArticleDetail);
 
-    List<UserArticleDetail> findByAuthor_Id(Long id);
+   // List<UserArticleDetail> findByAuthor_Id(Long id);
+    
+    List<UserArticleDetail> findByArticle_Reference(String reference);
 }

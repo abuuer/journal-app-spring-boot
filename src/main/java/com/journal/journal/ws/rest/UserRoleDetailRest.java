@@ -30,4 +30,10 @@ public class UserRoleDetailRest {
     public List<User> findAllReviewers() {
         return userRoleDetailService.findAllReviewers();
     }
+
+    @GetMapping("/findAllAuthors")
+    public List<User> findAllAuthors() {
+        return userRoleDetailService.findAllAuthors();
+    }
+
 }

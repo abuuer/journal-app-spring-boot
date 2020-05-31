@@ -7,6 +7,7 @@ package com.journal.journal.service.facade;
 
 import com.journal.journal.bean.Article;
 import java.util.List;
+import org.springframework.http.ResponseEntity;
 
 /**
  *
@@ -17,5 +18,7 @@ public interface ArticleService {
     public int save(Article article);
     
     public List<Article> findAll();
+    
+    public ResponseEntity<?> assignReviewer(String articleRef,Long reviewerId);
     
 }

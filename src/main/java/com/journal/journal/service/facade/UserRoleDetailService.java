@@ -23,5 +23,7 @@ public interface UserRoleDetailService {
     List<UserRoleDetail> findByRole_Name(ERole name);
 
     List<User> findAllReviewers();
+    
+    List<User> findAllAuthors();
 
 }

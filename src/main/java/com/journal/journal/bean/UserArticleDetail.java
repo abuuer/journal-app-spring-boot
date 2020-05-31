@@ -24,8 +24,9 @@ public class UserArticleDetail implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private String userFunction;
     @ManyToOne
-    private User author;
+    private User user;
     @ManyToOne
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Article article;
@@ -33,9 +34,26 @@ public class UserArticleDetail implements Serializable {
     public UserArticleDetail() {
     }
 
-    public UserArticleDetail(User author, Article article) {
-        this.author = author;
+    public UserArticleDetail(String userFunction, User user, Article article) {
+        this.userFunction = userFunction;
+        this.user = user;
         this.article = article;
+    }
+
+    public String getFunction() {
+        return userFunction;
+    }
+
+    public void setFunction(String userFunction) {
+        this.userFunction = userFunction;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Long getId() {
@@ -44,14 +62,6 @@ public class UserArticleDetail implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public User getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(User author) {
-        this.author = author;
     }
 
     public Article getArticle() {

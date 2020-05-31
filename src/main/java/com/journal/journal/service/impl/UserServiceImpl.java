@@ -248,4 +248,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepository.findById(id);
     }
 
+    @Override
+    public ResponseEntity<?> authorToReviewer(Long authorId) {
+        Optional<User> fAuthor = userRepository.findById(authorId);
+        List<UserRoleDetail> userRoleDetail = userRoleDetailService.findByUser_Id(authorId);
+        if (!fAuthor.isPresent()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Author doesn't exist"));
+        } else {
+            Role reviewerRole = roleService.findByName(ERole.ROLE_REVIEWER).get();
+            UserRoleDetail urd = new UserRoleDetail(fAuthor.get(), reviewerRole);
+            userRoleDetailService.save(urd);
+            fAuthor.get().setAvailability("Available");
+            userRepository.save(fAuthor.get());
+            return ResponseEntity.ok(new MessageResponse(fAuthor.get().getLastName()
+                    + " " + fAuthor.get().getFirstName() + " is a reviewer now!"));
+        }
+    }
+
 }

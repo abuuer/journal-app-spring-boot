@@ -28,9 +28,10 @@ public class UserArticleDetailServiceImpl implements UserArticleDetailService{
         repository.save(userArticleDetail);
     }
 
+
     @Override
-    public List<UserArticleDetail> findByAuthor_Id(Long id) {
-        return repository.findByAuthor_Id(id);
+    public List<UserArticleDetail> findByArticle_Reference(String reference) {
+        return repository.findByArticle_Reference(reference);
     }
 
     

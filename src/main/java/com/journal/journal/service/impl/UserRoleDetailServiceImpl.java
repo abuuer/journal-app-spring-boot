@@ -56,4 +56,18 @@ public class UserRoleDetailServiceImpl implements UserRoleDetailService {
         
     }
 
+    @Override
+    public List<User> findAllAuthors() {
+        List<UserRoleDetail> urd = findByRole_Name(ERole.ROLE_AUTHOR);
+        if(urd == null){
+            return null;
+        } else {
+            List<User> users = new ArrayList<>();
+            urd.forEach((userRoleDetail) -> {
+                users.add(userRoleDetail.getUser());
+            });
+            return users;
+        }
+    }
+
 }

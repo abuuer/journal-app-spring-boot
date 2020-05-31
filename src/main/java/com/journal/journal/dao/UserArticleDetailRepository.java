@@ -17,6 +17,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserArticleDetailRepository extends JpaRepository<UserArticleDetail, Long> {
 
-    List<UserArticleDetail> findByAuthor_Id(Long id);
-    
+  //  List<UserArticleDetail> findByAuthor_Id(Long id);
+
+    List<UserArticleDetail> findByArticle_Reference(String reference);
+
 }

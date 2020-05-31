@@ -28,5 +28,7 @@ public interface UserService {
     public ResponseEntity<?> authenticateUser(LoginRequest loginRequest);
 
     public ResponseEntity<?> registerUser(SignupRequest signUpRequest);
+    
+    public ResponseEntity<?> authorToReviewer(Long authorId);
 
 }

@@ -13,6 +13,7 @@ import com.journal.journal.bean.User;
 import com.journal.journal.bean.UserArticleDetail;
 import com.journal.journal.bean.UserSpecialtyDetail;
 import com.journal.journal.dao.ArticleRepository;
+import com.journal.journal.security.payload.response.MessageResponse;
 import com.journal.journal.service.facade.ArticleService;
 import com.journal.journal.service.facade.ArticleTagsDetailService;
 import java.util.List;
@@ -25,6 +26,7 @@ import com.journal.journal.service.facade.UserService;
 import com.journal.journal.service.facade.UserSpecialtyDetailService;
 import java.util.ArrayList;
 import java.util.Optional;
+import org.springframework.http.ResponseEntity;
 
 /**
  *
@@ -58,7 +60,7 @@ public class ArticleServiceImpl implements ArticleService {
             return -1;
         } else {
             articleRepository.save(article);
-               for (FileInfo fileInfo : article.getFileInfos()) {
+            for (FileInfo fileInfo : article.getFileInfos()) {
                 FileInfo foundedFile = fileService.findByReference(fileInfo.getReference());
                 if (foundedFile == null) {
                     System.out.println("foundedFile == null");
@@ -81,21 +83,21 @@ public class ArticleServiceImpl implements ArticleService {
             }
             if (article.getUserArticleDetails() != null) {
                 for (UserArticleDetail userArticleDetail : article.getUserArticleDetails()) {
-                    Optional<User> fUser = userService.findByEmail(userArticleDetail.getAuthor().getEmail());
+                    Optional<User> fUser = userService.findByEmail(userArticleDetail.getUser().getEmail());
                     // save user speacialty from article submission
                     List<Tag> s = userSpecialtyDetailService.findTagByUserId(fUser.get().getId());
                     for (Tag tag : tags) {
-                        if(!s.contains(tag)){
+                        if (!s.contains(tag)) {
                             UserSpecialtyDetail usd = new UserSpecialtyDetail(fUser.get(), tag);
                             userSpecialtyDetailService.save(usd);
                         }
                     }
                     if (!fUser.isPresent()) {
-                        userService.save(userArticleDetail.getAuthor());
-                        UserArticleDetail uad = new UserArticleDetail(userArticleDetail.getAuthor(), article);
+                        userService.save(userArticleDetail.getUser());
+                        UserArticleDetail uad = new UserArticleDetail("Author", userArticleDetail.getUser(), article);
                         userArticleDetailService.save(uad);
                     } else {
-                        UserArticleDetail uad = new UserArticleDetail(fUser.get(), article);
+                        UserArticleDetail uad = new UserArticleDetail("Author", fUser.get(), article);
                         userArticleDetailService.save(uad);
                     }
                 }
@@ -109,6 +111,27 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public List<Article> findAll() {
         return articleRepository.findAll();
+    }
+
+    @Override
+    public ResponseEntity<?> assignReviewer(String articleRef, Long reviewerId) {
+        Article fArticle = articleRepository.findByReference(articleRef);
+        Optional<User> freviewer = userService.findById(reviewerId);
+
+        if (!freviewer.isPresent()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Reviewer doesn't exist"));
+        } else if (fArticle == null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Article doesn't exist"));
+        } else {
+            UserArticleDetail uad = new UserArticleDetail("Reviewer", freviewer.get(), fArticle);
+            userArticleDetailService.save(uad);
+            return ResponseEntity.ok(new MessageResponse("Assigned " + freviewer.get().getFirstName() + " "
+                    + freviewer.get().getLastName() + " to the article"));
+        }
     }
 
 }

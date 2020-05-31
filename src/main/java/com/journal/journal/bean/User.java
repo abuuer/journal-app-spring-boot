@@ -46,13 +46,14 @@ public class User implements Serializable {
     private String departement;
     private String instAdress;
     private String instPhone;
+    private String availability;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToMany(fetch = FetchType.EAGER,mappedBy = "user")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     private List<UserRoleDetail> userRoleDetails;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "user")
     private List<UserArticleDetail> userArticleDetails;
     @OneToMany(mappedBy = "user")
     private List<UserSpecialtyDetail> userSpecialtyDetails;
@@ -82,6 +83,14 @@ public class User implements Serializable {
 
     public Long getId() {
         return id;
+    }
+
+    public String getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(String availability) {
+        this.availability = availability;
     }
 
     public void setId(Long id) {
