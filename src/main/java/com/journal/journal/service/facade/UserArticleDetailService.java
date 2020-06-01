@@ -6,9 +6,9 @@
 package com.journal.journal.service.facade;
 
 import com.journal.journal.bean.Article;
-import com.journal.journal.bean.User;
 import com.journal.journal.bean.UserArticleDetail;
 import java.util.List;
+import org.springframework.http.ResponseEntity;
 
 /**
  *
@@ -18,7 +18,13 @@ public interface UserArticleDetailService {
 
     void save(UserArticleDetail userArticleDetail);
 
-   // List<UserArticleDetail> findByAuthor_Id(Long id);
-    
+    List<UserArticleDetail> findByUser_Id(Long id);
+
     List<UserArticleDetail> findByArticle_Reference(String reference);
+
+    List<Article> findAllArticlesByReviewer(Long id);
+
+    List<Article> findAllArticlesByAuthor(Long id);
+    
+    ResponseEntity<?> deleteByUser_Id(Long id);
 }

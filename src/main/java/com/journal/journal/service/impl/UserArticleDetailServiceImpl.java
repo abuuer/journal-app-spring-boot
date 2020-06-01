@@ -5,12 +5,18 @@
  */
 package com.journal.journal.service.impl;
 
+import com.journal.journal.bean.Article;
 import com.journal.journal.bean.User;
 import com.journal.journal.bean.UserArticleDetail;
 import com.journal.journal.dao.UserArticleDetailRepository;
+import com.journal.journal.security.payload.response.MessageResponse;
 import com.journal.journal.service.facade.UserArticleDetailService;
+import com.journal.journal.service.facade.UserService;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,21 +24,62 @@ import org.springframework.stereotype.Service;
  * @author anoir
  */
 @Service
-public class UserArticleDetailServiceImpl implements UserArticleDetailService{
+public class UserArticleDetailServiceImpl implements UserArticleDetailService {
 
     @Autowired
     private UserArticleDetailRepository repository;
     
+    @Autowired
+    private UserService userService;
+
     @Override
     public void save(UserArticleDetail userArticleDetail) {
         repository.save(userArticleDetail);
     }
-
 
     @Override
     public List<UserArticleDetail> findByArticle_Reference(String reference) {
         return repository.findByArticle_Reference(reference);
     }
 
-    
+    @Override
+    public List<UserArticleDetail> findByUser_Id(Long id) {
+        return repository.findByUser_Id(id);
+    }
+
+    @Override
+    public List<Article> findAllArticlesByReviewer(Long id) {
+        List<UserArticleDetail> userArticleDetails = repository.findByUser_Id(id);
+        List<Article> articles = new ArrayList<>();
+        userArticleDetails.stream().filter((userArticleDetail) -> (userArticleDetail.getFunction().equals("Reviewer"))).forEachOrdered((userArticleDetail) -> {
+            articles.add(userArticleDetail.getArticle());
+        });
+        return articles;
+    }
+
+    @Override
+    public List<Article> findAllArticlesByAuthor(Long id) {
+        List<UserArticleDetail> userArticleDetails = repository.findByUser_Id(id);
+        List<Article> articles = new ArrayList<>();
+        userArticleDetails.stream().filter((userArticleDetail) -> (userArticleDetail.getFunction().equals("Author"))).forEachOrdered((userArticleDetail) -> {
+            articles.add(userArticleDetail.getArticle());
+        });
+        return articles;
+    }
+
+    @Override
+    public ResponseEntity<?> deleteByUser_Id(Long id) {
+        Optional<User> fUser = userService.findById(id);
+        if(!fUser.isPresent()){
+             return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("User doesn't exist"));
+        } else {
+            repository.deleteByUser_Id(id);
+            return ResponseEntity.ok(new MessageResponse(fUser.get().getFirstName() + " " 
+                    + fUser.get().getLastName() + " is dismissed" ));
+        }
+        
+    }
+
 }

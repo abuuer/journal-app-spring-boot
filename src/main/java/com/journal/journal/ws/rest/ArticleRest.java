@@ -40,9 +40,9 @@ public class ArticleRest {
         return articleService.findAll();
     }
 
-    @PutMapping("/assignReviewer/articleRef/{articleRef}/reviewerId/{reviewerId}")
-    public ResponseEntity<?> assignReviewer(@PathVariable String articleRef,@PathVariable Long reviewerId) {
-        return articleService.assignReviewer(articleRef, reviewerId);
+    @PutMapping("/assignReviewer/articleRef/{articleRef}/id/{id}")
+    public ResponseEntity<?> assignReviewer(@PathVariable String articleRef,@PathVariable Long id) {
+        return articleService.assignReviewer(articleRef,id);
     }
     
 }

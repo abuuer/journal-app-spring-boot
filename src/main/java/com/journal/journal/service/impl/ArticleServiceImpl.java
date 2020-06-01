@@ -114,14 +114,23 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public ResponseEntity<?> assignReviewer(String articleRef, Long reviewerId) {
+    public ResponseEntity<?> assignReviewer(String articleRef, Long id) {
         Article fArticle = articleRepository.findByReference(articleRef);
-        Optional<User> freviewer = userService.findById(reviewerId);
-
+        List<UserArticleDetail> userArticles = userArticleDetailService.findByArticle_Reference(articleRef);
+        List<User> freviewers = new ArrayList<>();
+        for (UserArticleDetail userArticle : userArticles) {
+            freviewers.add(userArticle.getUser());
+        }
+        Optional<User> freviewer = userService.findById(id);
         if (!freviewer.isPresent()) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Reviewer doesn't exist"));
+        } else if (freviewers.contains(freviewer.get())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse(freviewer.get().getLastName()
+                            + " is already assigned as a reviewer to this article"));
         } else if (fArticle == null) {
             return ResponseEntity
                     .badRequest()
@@ -132,6 +141,11 @@ public class ArticleServiceImpl implements ArticleService {
             return ResponseEntity.ok(new MessageResponse("Assigned " + freviewer.get().getFirstName() + " "
                     + freviewer.get().getLastName() + " to the article"));
         }
+    }
+	
+	@Override
+    public ResponseEntity<?> dismissReviewer(String articleRef, Long id) {
+        return ResponseEntity.ok(new MessageResponse("Assigned "));
     }
 
 }

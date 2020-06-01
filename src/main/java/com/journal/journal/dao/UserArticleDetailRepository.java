@@ -8,6 +8,7 @@ package com.journal.journal.dao;
 import com.journal.journal.bean.UserArticleDetail;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -17,8 +18,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserArticleDetailRepository extends JpaRepository<UserArticleDetail, Long> {
 
-  //  List<UserArticleDetail> findByAuthor_Id(Long id);
+    List<UserArticleDetail> findByUser_Id(Long id);
 
     List<UserArticleDetail> findByArticle_Reference(String reference);
+    
+    ResponseEntity<?> deleteByUser_Id(Long id);
 
 }

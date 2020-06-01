@@ -5,12 +5,15 @@
  */
 package com.journal.journal.ws.rest;
 
+import com.journal.journal.bean.Article;
 import com.journal.journal.bean.UserArticleDetail;
 import com.journal.journal.service.facade.UserArticleDetailService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,9 +33,20 @@ public class UserArticleDetailRest {
     @Autowired
     private UserArticleDetailService userArticleDetailService;
 
- /*   @GetMapping("/id/{id}")
-   // @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_AUTHOR')")
-    public List<UserArticleDetail> findByAuthor_Id(@PathVariable Long id) {
-        return userArticleDetailService.findByAuthor_Id(id);
-    }*/
+    @GetMapping("/findAllArticlesByReviewer/id/{id}")
+    public List<Article> findAllArticlesByReviewer(@PathVariable Long id) {
+        return userArticleDetailService.findAllArticlesByReviewer(id);
+    }
+
+    @GetMapping("/findAllArticlesByAuthor/id/{id}")
+    public List<Article> findAllArticlesByAuthor(@PathVariable Long id) {
+        return userArticleDetailService.findAllArticlesByAuthor(id);
+    }
+
+    @DeleteMapping("/deleteByUserId/id/{id}")
+    public ResponseEntity<?> deleteByUser_Id(@PathVariable Long id) {
+        return userArticleDetailService.deleteByUser_Id(id);
+    }
+
+    
 }

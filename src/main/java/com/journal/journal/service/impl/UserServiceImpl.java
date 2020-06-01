@@ -249,20 +249,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public ResponseEntity<?> authorToReviewer(Long authorId) {
-        Optional<User> fAuthor = userRepository.findById(authorId);
-        List<UserRoleDetail> userRoleDetail = userRoleDetailService.findByUser_Id(authorId);
-        if (!fAuthor.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Author doesn't exist"));
-        } else {
-            Role reviewerRole = roleService.findByName(ERole.ROLE_REVIEWER).get();
-            UserRoleDetail urd = new UserRoleDetail(fAuthor.get(), reviewerRole);
-            userRoleDetailService.save(urd);
-            fAuthor.get().setAvailability("Available");
-            userRepository.save(fAuthor.get());
-            return ResponseEntity.ok(new MessageResponse(fAuthor.get().getLastName()
-                    + " " + fAuthor.get().getFirstName() + " is a reviewer now!"));
+    public List<ResponseEntity<?>> authorToReviewer(List<User> users) {
+        List<ResponseEntity<?>> responses = new ArrayList<>();
+        for (User user : users) {
+            Optional<User> fAuthor = userRepository.findById(user.getId());
+            List<UserRoleDetail> userRoleDetail = userRoleDetailService.findByUser_Id(user.getId());
+            if (!fAuthor.isPresent()) {
+                responses.add(ResponseEntity.badRequest().body(new MessageResponse("Author doesn't exist")));
+            } else {
+                Role reviewerRole = roleService.findByName(ERole.ROLE_REVIEWER).get();
+                UserRoleDetail urd = new UserRoleDetail(fAuthor.get(), reviewerRole);
+                userRoleDetailService.save(urd);
+                fAuthor.get().setAvailability("Available");
+                userRepository.save(fAuthor.get());
+                responses.add(ResponseEntity.badRequest().body(new MessageResponse(fAuthor.get().getLastName()
+                        + " " + fAuthor.get().getFirstName() + " is a reviewer now!")));
+            }
         }
+        return responses;
     }
 
 }

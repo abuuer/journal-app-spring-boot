@@ -8,6 +8,7 @@ package com.journal.journal.service.facade;
 import com.journal.journal.bean.User;
 import com.journal.journal.security.payload.request.LoginRequest;
 import com.journal.journal.security.payload.request.SignupRequest;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 
@@ -29,6 +30,6 @@ public interface UserService {
 
     public ResponseEntity<?> registerUser(SignupRequest signUpRequest);
     
-    public ResponseEntity<?> authorToReviewer(Long authorId);
+    public List<ResponseEntity<?>> authorToReviewer(List<User> users);
 
 }

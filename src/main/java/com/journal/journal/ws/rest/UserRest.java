@@ -54,9 +54,9 @@ public class UserRest {
         return userService.findByEmail(email);
     }
 
-    @PutMapping("/authorToReviewer/id/{authorId}")
-    public ResponseEntity<?> authorToReviewer(@PathVariable Long authorId) {
-        return userService.authorToReviewer(authorId);
+    @PutMapping("/authorToReviewer/")
+    public List<ResponseEntity<?>> authorToReviewer(@RequestBody List<User> users) {
+        return userService.authorToReviewer(users);
     }
     
     
