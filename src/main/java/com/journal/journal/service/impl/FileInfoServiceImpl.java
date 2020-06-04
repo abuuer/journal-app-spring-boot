@@ -84,7 +84,7 @@ public class FileInfoServiceImpl implements FileInfoService {
     }
 
     @Override
-    public ResponseEntity<ResponseMessage> uploadFile(MultipartFile file, String fileType) {
+    public ResponseEntity<?> uploadFile(MultipartFile file, String fileType) {
         String message = "";
         try {
             String fileName;
@@ -98,8 +98,8 @@ public class FileInfoServiceImpl implements FileInfoService {
             FileInfo newFile = new FileInfo(currentfile.getFilename(), url, fileType);
             saveInfo(newFile);
 
-            message = "Uploaded the files successfully: " + fileName;
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+            //message = "Uploaded the file successfully: " + fileName;
+            return ResponseEntity.status(HttpStatus.OK).body(newFile);
         } catch (Exception e) {
             message = "Fail to upload files!";
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)

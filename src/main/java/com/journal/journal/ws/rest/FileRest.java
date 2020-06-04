@@ -35,7 +35,7 @@ public class FileRest {
     private FileInfoService fileService;
 
     @PostMapping("/upload/type/{fileType}")
-    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("files") MultipartFile file,@PathVariable String fileType) {
+    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file,@PathVariable String fileType) {
         return fileService.uploadFile(file, fileType);
     }
 
