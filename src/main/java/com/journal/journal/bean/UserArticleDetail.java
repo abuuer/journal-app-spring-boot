@@ -5,6 +5,7 @@
  */
 package com.journal.journal.bean;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import javax.persistence.Entity;
@@ -23,6 +24,7 @@ public class UserArticleDetail implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
     private String userFunction;
     @ManyToOne

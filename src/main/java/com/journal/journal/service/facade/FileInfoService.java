@@ -27,8 +27,6 @@ public interface FileInfoService {
 
     public void init();
 
-    public FileInfo findById(Long Id);
-
     public int saveInfo(FileInfo file);
 
     public void storeFile(MultipartFile file);
@@ -44,5 +42,7 @@ public interface FileInfoService {
     public ResponseEntity<List<FileInfo>> getListFiles();
 
     public ResponseEntity<Resource> getFile(String filename);
+    
+    ResponseEntity<?> deleteByUrl(String url);
 
 }

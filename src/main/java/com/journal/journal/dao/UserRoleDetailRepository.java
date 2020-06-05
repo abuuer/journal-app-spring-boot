@@ -18,7 +18,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRoleDetailRepository extends JpaRepository<UserRoleDetail, Long> {
 
-    List<UserRoleDetail> findByUser_Id(Long id);
+    List<UserRoleDetail> findByUser_Email(String email);
     
     List<UserRoleDetail> findByRole_Name(ERole name);
 }

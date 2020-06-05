@@ -31,10 +31,6 @@ public class UserRoleDetailServiceImpl implements UserRoleDetailService {
         return 1;
     }
 
-    @Override
-    public List<UserRoleDetail> findByUser_Id(Long id) {
-        return userRoleDetailRepository.findByUser_Id(id);
-    }
 
     @Override
     public List<UserRoleDetail> findByRole_Name(ERole name) {
@@ -68,6 +64,11 @@ public class UserRoleDetailServiceImpl implements UserRoleDetailService {
             });
             return users;
         }
+    }
+
+    @Override
+    public List<UserRoleDetail> findByUser_Email(String email) {
+        return userRoleDetailRepository.findByUser_Email(email);
     }
 
 }

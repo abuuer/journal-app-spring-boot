@@ -18,10 +18,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserArticleDetailRepository extends JpaRepository<UserArticleDetail, Long> {
 
-    List<UserArticleDetail> findByUser_Id(Long id);
+    List<UserArticleDetail> findByUser_Email(String email);
 
     List<UserArticleDetail> findByArticle_Reference(String reference);
     
-    ResponseEntity<?> deleteByUser_Id(Long id);
+    ResponseEntity<?> deleteByUser_Email(String email);
 
 }

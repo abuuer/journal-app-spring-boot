@@ -85,7 +85,7 @@ public class ArticleServiceImpl implements ArticleService {
                 for (UserArticleDetail userArticleDetail : article.getUserArticleDetails()) {
                     Optional<User> fUser = userService.findByEmail(userArticleDetail.getUser().getEmail());
                     // save user speacialty from article submission
-                    List<Tag> s = userSpecialtyDetailService.findTagByUserId(fUser.get().getId());
+                    List<Tag> s = userSpecialtyDetailService.findTagByUser_Email(fUser.get().getEmail());
                     for (Tag tag : tags) {
                         if (!s.contains(tag)) {
                             UserSpecialtyDetail usd = new UserSpecialtyDetail(fUser.get(), tag);
@@ -114,14 +114,14 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public ResponseEntity<?> assignReviewer(String articleRef, Long id) {
+    public ResponseEntity<?> assignReviewer(String articleRef, String email) {
         Article fArticle = articleRepository.findByReference(articleRef);
         List<UserArticleDetail> userArticles = userArticleDetailService.findByArticle_Reference(articleRef);
         List<User> freviewers = new ArrayList<>();
         for (UserArticleDetail userArticle : userArticles) {
             freviewers.add(userArticle.getUser());
         }
-        Optional<User> freviewer = userService.findById(id);
+        Optional<User> freviewer = userService.findByEmail(email);
         if (!freviewer.isPresent()) {
             return ResponseEntity
                     .badRequest()

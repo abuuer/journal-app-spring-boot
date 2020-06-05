@@ -33,19 +33,19 @@ public class UserArticleDetailRest {
     @Autowired
     private UserArticleDetailService userArticleDetailService;
 
-    @GetMapping("/findAllArticlesByReviewer/id/{id}")
-    public List<Article> findAllArticlesByReviewer(@PathVariable Long id) {
-        return userArticleDetailService.findAllArticlesByReviewer(id);
+    @GetMapping("/findAllArticlesByReviewer/email/{email}")
+    public List<Article> findAllArticlesByReviewer(@PathVariable String email) {
+        return userArticleDetailService.findAllArticlesByReviewer(email);
     }
 
-    @GetMapping("/findAllArticlesByAuthor/id/{id}")
-    public List<Article> findAllArticlesByAuthor(@PathVariable Long id) {
-        return userArticleDetailService.findAllArticlesByAuthor(id);
+    @GetMapping("/findAllArticlesByAuthor/email/{email}")
+    public List<Article> findAllArticlesByAuthor(@PathVariable String email) {
+        return userArticleDetailService.findAllArticlesByAuthor(email);
     }
 
-    @DeleteMapping("/deleteByUserId/id/{id}")
-    public ResponseEntity<?> deleteByUser_Id(@PathVariable Long id) {
-        return userArticleDetailService.deleteByUser_Id(id);
+    @DeleteMapping("/deleteByUserId/email/{email}")
+    public ResponseEntity<?> deleteByUser_Email(@PathVariable String email) {
+        return userArticleDetailService.deleteByUser_Email(email);
     }
 
     

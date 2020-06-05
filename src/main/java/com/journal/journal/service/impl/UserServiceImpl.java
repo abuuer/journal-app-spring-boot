@@ -24,15 +24,16 @@ import com.journal.journal.service.facade.UserRoleDetailService;
 import com.journal.journal.service.facade.UserService;
 import com.journal.journal.service.facade.UserSpecialtyDetailService;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -101,7 +102,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public ResponseEntity<?> authenticateUser(LoginRequest loginRequest) {
 
-        Authentication authentication = authenticationManager.authenticate(
+        try {
+             Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -113,9 +115,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getId(),
                 userDetails.getEmail(),
                 roles));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(("Invalid email or password")));
+        } catch(AuthenticationException e){
+            return ResponseEntity.badRequest().body(new MessageResponse(("Authentication failed")));
+        }
+
     }
 
     @Override
@@ -243,17 +250,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return ResponseEntity.ok(new MessageResponse("1"));
     }
 
-    @Override
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
-    }
 
     @Override
     public List<ResponseEntity<?>> authorToReviewer(List<User> users) {
         List<ResponseEntity<?>> responses = new ArrayList<>();
         for (User user : users) {
-            Optional<User> fAuthor = userRepository.findById(user.getId());
-            List<UserRoleDetail> userRoleDetail = userRoleDetailService.findByUser_Id(user.getId());
+            Optional<User> fAuthor = userRepository.findByEmail(user.getEmail());
+            List<UserRoleDetail> userRoleDetail = userRoleDetailService.findByUser_Email(user.getEmail());
             if (!fAuthor.isPresent()) {
                 responses.add(ResponseEntity.badRequest().body(new MessageResponse("Author doesn't exist")));
             } else {

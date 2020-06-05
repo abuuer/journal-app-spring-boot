@@ -6,7 +6,6 @@
 package com.journal.journal.service.facade;
 
 import com.journal.journal.bean.Article;
-import com.journal.journal.bean.User;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 
@@ -15,13 +14,13 @@ import org.springframework.http.ResponseEntity;
  * @author anoir
  */
 public interface ArticleService {
-    
+
     public int save(Article article);
-    
+
     public List<Article> findAll();
-    
-    public ResponseEntity<?> assignReviewer(String articleRef,Long id);
-	
-	public ResponseEntity<?> dismissReviewer(String articleRef,Long id);
-    
+
+    public ResponseEntity<?> assignReviewer(String articleRef, String email);
+
+    public ResponseEntity<?> dismissReviewer(String articleRef, Long id);
+
 }

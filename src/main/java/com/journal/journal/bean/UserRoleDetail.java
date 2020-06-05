@@ -5,6 +5,7 @@
  */
 package com.journal.journal.bean;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -23,6 +24,7 @@ public class UserRoleDetail implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
     
     @ManyToOne(fetch = FetchType.EAGER)

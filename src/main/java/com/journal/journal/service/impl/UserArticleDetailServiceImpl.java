@@ -28,7 +28,7 @@ public class UserArticleDetailServiceImpl implements UserArticleDetailService {
 
     @Autowired
     private UserArticleDetailRepository repository;
-    
+
     @Autowired
     private UserService userService;
 
@@ -43,13 +43,8 @@ public class UserArticleDetailServiceImpl implements UserArticleDetailService {
     }
 
     @Override
-    public List<UserArticleDetail> findByUser_Id(Long id) {
-        return repository.findByUser_Id(id);
-    }
-
-    @Override
-    public List<Article> findAllArticlesByReviewer(Long id) {
-        List<UserArticleDetail> userArticleDetails = repository.findByUser_Id(id);
+    public List<Article> findAllArticlesByReviewer(String email) {
+        List<UserArticleDetail> userArticleDetails = repository.findByUser_Email(email);
         List<Article> articles = new ArrayList<>();
         userArticleDetails.stream().filter((userArticleDetail) -> (userArticleDetail.getFunction().equals("Reviewer"))).forEachOrdered((userArticleDetail) -> {
             articles.add(userArticleDetail.getArticle());
@@ -58,8 +53,8 @@ public class UserArticleDetailServiceImpl implements UserArticleDetailService {
     }
 
     @Override
-    public List<Article> findAllArticlesByAuthor(Long id) {
-        List<UserArticleDetail> userArticleDetails = repository.findByUser_Id(id);
+    public List<Article> findAllArticlesByAuthor(String email) {
+        List<UserArticleDetail> userArticleDetails = repository.findByUser_Email(email);
         List<Article> articles = new ArrayList<>();
         userArticleDetails.stream().filter((userArticleDetail) -> (userArticleDetail.getFunction().equals("Author"))).forEachOrdered((userArticleDetail) -> {
             articles.add(userArticleDetail.getArticle());
@@ -68,18 +63,23 @@ public class UserArticleDetailServiceImpl implements UserArticleDetailService {
     }
 
     @Override
-    public ResponseEntity<?> deleteByUser_Id(Long id) {
-        Optional<User> fUser = userService.findById(id);
-        if(!fUser.isPresent()){
-             return ResponseEntity
+    public ResponseEntity<?> deleteByUser_Email(String email) {
+        Optional<User> fUser = userService.findByEmail(email);
+        if (!fUser.isPresent()) {
+            return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("User doesn't exist"));
         } else {
-            repository.deleteByUser_Id(id);
-            return ResponseEntity.ok(new MessageResponse(fUser.get().getFirstName() + " " 
-                    + fUser.get().getLastName() + " is dismissed" ));
+            repository.deleteByUser_Email(email);
+            return ResponseEntity.ok(new MessageResponse(fUser.get().getFirstName() + " "
+                    + fUser.get().getLastName() + " is dismissed"));
         }
-        
+
+    }
+
+    @Override
+    public List<UserArticleDetail> findByUser_Email(String email) {
+        return repository.findByUser_Email(email);
     }
 
 }

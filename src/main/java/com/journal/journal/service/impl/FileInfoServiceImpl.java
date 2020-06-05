@@ -146,13 +146,14 @@ public class FileInfoServiceImpl implements FileInfoService {
     }
 
     @Override
-    public FileInfo findById(Long Id) {
-        return fileInfoRepository.findById(Id).get();
-    }
-
-    @Override
     public void save(FileInfo file) {
-        fileInfoRepository.save(file);
+        FileInfo fFile = fileInfoRepository.findByUrl(file.getUrl());
+        if(fFile != null && fFile.getArticle() == null){
+            fFile.setArticle(file.getArticle());
+            fileInfoRepository.save(fFile);
+        }else {
+            fileInfoRepository.save(file);
+        }
     }
 
     @Override
@@ -173,5 +174,11 @@ public class FileInfoServiceImpl implements FileInfoService {
                 .toString();
 
         return generatedString;
+    }
+
+    @Override
+    public ResponseEntity<?> deleteByUrl(String url) {
+        fileInfoRepository.deleteByUrl(url);
+        return ResponseEntity.ok(new ResponseMessage("File deleted successfully"));
     }
 }

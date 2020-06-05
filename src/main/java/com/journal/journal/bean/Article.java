@@ -5,6 +5,7 @@
  */
 package com.journal.journal.bean;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.Date;
@@ -26,6 +27,7 @@ public class Article implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
     private String reference;
     private String type;
@@ -48,7 +50,7 @@ public class Article implements Serializable {
     private List<ArticleTagsDetail> articleTags;
 
     public Article() {
-        this.status = "pending";
+        this.status = "new";
         this.submitDate = new Date();
     }
 
@@ -147,6 +149,15 @@ public class Article implements Serializable {
     public void setAmount(Double amount) {
         this.amount = amount;
     }
+
+    public Date getSubmitDate() {
+        return submitDate;
+    }
+
+    public void setSubmitDate(Date submitDate) {
+        this.submitDate = submitDate;
+    }
+    
 
     @Override
     public int hashCode() {

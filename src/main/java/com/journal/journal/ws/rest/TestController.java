@@ -25,11 +25,11 @@ public class TestController {
     @Autowired
     private UserSpecialtyDetailService userSpecialtyDetailService;
 
-    @GetMapping("/id/{id}")
+  /*  @GetMapping("/id/{id}")
     public List<Tag> findTagByUserId(@PathVariable Long id) {
         System.out.println(id);
         return userSpecialtyDetailService.findTagByUserId(id);
-    }
+    }*/
 
     
     

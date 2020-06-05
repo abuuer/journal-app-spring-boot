@@ -7,6 +7,7 @@ package com.journal.journal.dao;
 
 import com.journal.journal.bean.FileInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -19,4 +20,8 @@ public interface FileInfoRepository extends JpaRepository<FileInfo, Long> {
     FileInfo findByReference(String reference);
     
     FileInfo findByUrl(String url);
+    
+    ResponseEntity<?> deleteByUrl(String url);
+    
+    
 }

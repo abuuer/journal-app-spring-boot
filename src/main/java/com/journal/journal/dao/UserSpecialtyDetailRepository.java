@@ -18,6 +18,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserSpecialtyDetailRepository extends JpaRepository<UserSpecialtyDetail, Long> {
 
-    List<UserSpecialtyDetail> findByUser(User user);
+    List<UserSpecialtyDetail> findByUser_Email(String email);
 
 }

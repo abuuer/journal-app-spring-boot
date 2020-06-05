@@ -18,7 +18,7 @@ public interface UserRoleDetailService {
 
     int save(UserRoleDetail userRoleDetail);
 
-    List<UserRoleDetail> findByUser_Id(Long id);
+    List<UserRoleDetail> findByUser_Email(String email);
 
     List<UserRoleDetail> findByRole_Name(ERole name);
 

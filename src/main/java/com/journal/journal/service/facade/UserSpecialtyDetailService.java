@@ -6,7 +6,6 @@
 package com.journal.journal.service.facade;
 
 import com.journal.journal.bean.Tag;
-import com.journal.journal.bean.User;
 import com.journal.journal.bean.UserSpecialtyDetail;
 import java.util.List;
 
@@ -16,9 +15,9 @@ import java.util.List;
  */
 public interface UserSpecialtyDetailService {
 
-    List<UserSpecialtyDetail> findByUser(User user);
+    List<UserSpecialtyDetail> findByUser_Email(String email);
 
-    List<Tag> findTagByUserId(Long id);
+    List<Tag> findTagByUser_Email(String email);
 
     void save(UserSpecialtyDetail userSpecialtyDetail);
 }

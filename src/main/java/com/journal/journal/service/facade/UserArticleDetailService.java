@@ -18,13 +18,13 @@ public interface UserArticleDetailService {
 
     void save(UserArticleDetail userArticleDetail);
 
-    List<UserArticleDetail> findByUser_Id(Long id);
+    List<UserArticleDetail> findByUser_Email(String email);
 
     List<UserArticleDetail> findByArticle_Reference(String reference);
 
-    List<Article> findAllArticlesByReviewer(Long id);
+    List<Article> findAllArticlesByReviewer(String email);
 
-    List<Article> findAllArticlesByAuthor(Long id);
+    List<Article> findAllArticlesByAuthor(String email);
     
-    ResponseEntity<?> deleteByUser_Id(Long id);
+    ResponseEntity<?> deleteByUser_Email(String email);
 }

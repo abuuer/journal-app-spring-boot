@@ -36,17 +36,12 @@ public class UserSpecialtyDetailImpl implements UserSpecialtyDetailService {
     }
 
     @Override
-    public List<UserSpecialtyDetail> findByUser(User user) {
-        return repository.findByUser(user);
-    }
-
-    @Override
-    public List<Tag> findTagByUserId(Long id) {
-        Optional<User> fuser = userService.findById(id);
+    public List<Tag> findTagByUser_Email(String email) {
+        Optional<User> fuser = userService.findByEmail(email);
         if (!fuser.isPresent()) {
             return null;
         } else {
-            List<UserSpecialtyDetail> usds = repository.findByUser(fuser.get());
+            List<UserSpecialtyDetail> usds = repository.findByUser_Email(email);
             List<Tag> tags = new ArrayList<>();
             for (UserSpecialtyDetail usd : usds) {
                 tags.add(usd.getTag());
@@ -55,5 +50,12 @@ public class UserSpecialtyDetailImpl implements UserSpecialtyDetailService {
         }
 
     }
+
+    @Override
+    public List<UserSpecialtyDetail> findByUser_Email(String email) {
+        return repository.findByUser_Email(email);
+    }
+
+   
 
 }
