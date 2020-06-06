@@ -13,6 +13,8 @@ import com.journal.journal.bean.UserDetailsImpl;
 import com.journal.journal.bean.UserRoleDetail;
 import com.journal.journal.bean.UserSpecialtyDetail;
 import com.journal.journal.dao.UserRepository;
+import com.journal.journal.email.service.EmailService;
+import com.journal.journal.message.ResponseMessage;
 import com.journal.journal.security.jwt.JwtUtils;
 import com.journal.journal.security.payload.request.LoginRequest;
 import com.journal.journal.security.payload.request.SignupRequest;
@@ -23,10 +25,14 @@ import com.journal.journal.service.facade.TagService;
 import com.journal.journal.service.facade.UserRoleDetailService;
 import com.journal.journal.service.facade.UserService;
 import com.journal.journal.service.facade.UserSpecialtyDetailService;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -75,6 +81,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Autowired
     private TagService tagService;
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -103,23 +112,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public ResponseEntity<?> authenticateUser(LoginRequest loginRequest) {
 
         try {
-             Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.generateJwtToken(authentication);
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            List<String> roles = userDetails.getAuthorities().stream()
+                    .map(item -> item.getAuthority())
+                    .collect(Collectors.toList());
 
-        return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getEmail(),
-                roles));
+            return ResponseEntity.ok(new JwtResponse(jwt,
+                    userDetails.getEmail(),
+                    roles));
         } catch (BadCredentialsException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(("Invalid email or password")));
-        } catch(AuthenticationException e){
+        } catch (AuthenticationException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(("Authentication failed")));
         }
 
@@ -133,11 +142,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                     .badRequest()
                     .body(new MessageResponse("-1"));
         }
-
+        // encoder.encode(signUpRequest.getPassword())
         // Create new user's account
-        User user = new User(signUpRequest.getFirstName(), signUpRequest.getLastName(),
-                signUpRequest.getMiddleName(), signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()), signUpRequest.getDegree(), signUpRequest.getAdress(),
+        User user = new User(signUpRequest.getPseudo(), signUpRequest.getFirstName(), signUpRequest.getLastName(),
+                signUpRequest.getMiddleName(), signUpRequest.getEmail(), signUpRequest.getDegree(), signUpRequest.getAdress(),
                 signUpRequest.getCountry(), signUpRequest.getRegion(), signUpRequest.getCity(), signUpRequest.getPostalCode(),
                 signUpRequest.getPhone(), signUpRequest.getFax(), signUpRequest.getInstitution(), signUpRequest.getDepartement(),
                 signUpRequest.getInstAdress(), signUpRequest.getInstPhone());
@@ -179,11 +187,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 }
             });
         }
+        try {
+            emailService.sendMessageUsingThymeleafTemplate(user.getPseudo(), user.getEmail(), user.getLastName());
+        } catch (IOException | MessagingException ex) {
+            Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
         if (fUser.isPresent() && fUser.get().getPassword() == null) {
             fUser.get().setFirstName(user.getFirstName());
             fUser.get().setLastName(user.getLastName());
             fUser.get().setMiddleName(user.getMiddleName());
-            fUser.get().setPassword(user.getPassword());
             fUser.get().setDegree(user.getDegree());
             fUser.get().setAdress(user.getAdress());
             fUser.get().setCountry(user.getCountry());
@@ -207,19 +219,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             }).forEachOrdered((userRoleDetail) -> {
                 userRoleDetailService.save(userRoleDetail);
             });
-            for (String s : signUpRequest.getSpecialty()) {
-                Tag t = new Tag(s);
-                Tag ftag = tagService.findByName(s);
-                if (ftag == null) {
-                    tagService.save(t);
-                    UserSpecialtyDetail usd = new UserSpecialtyDetail(fUser.get(), t);
-                    userSpecialtyDetailService.save(usd);
-                } else {
-                    UserSpecialtyDetail usd = new UserSpecialtyDetail(fUser.get(), ftag);
-                    userSpecialtyDetailService.save(usd);
+            if (signUpRequest.getSpecialty() != null) {
+                for (String s : signUpRequest.getSpecialty()) {
+                    Tag t = new Tag(s);
+                    Tag ftag = tagService.findByName(s);
+                    if (ftag == null) {
+                        tagService.save(t);
+                        UserSpecialtyDetail usd = new UserSpecialtyDetail(fUser.get(), t);
+                        userSpecialtyDetailService.save(usd);
+                    } else {
+                        UserSpecialtyDetail usd = new UserSpecialtyDetail(fUser.get(), ftag);
+                        userSpecialtyDetailService.save(usd);
+                    }
                 }
-
             }
+
         } else {
             save(user);
             roles.stream().map((role) -> {
@@ -232,24 +246,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             }).forEachOrdered((userRoleDetail) -> {
                 userRoleDetailService.save(userRoleDetail);
             });
-            for (String s : signUpRequest.getSpecialty()) {
-                Tag t = new Tag(s);
-                Tag ftag = tagService.findByName(s);
-                if (ftag == null) {
-                    tagService.save(t);
-                    UserSpecialtyDetail usd = new UserSpecialtyDetail(user, t);
-                    userSpecialtyDetailService.save(usd);
-                } else {
-                    UserSpecialtyDetail usd = new UserSpecialtyDetail(user, ftag);
-                    userSpecialtyDetailService.save(usd);
+            if (signUpRequest.getSpecialty() != null) {
+                for (String s : signUpRequest.getSpecialty()) {
+                    Tag t = new Tag(s);
+                    Tag ftag = tagService.findByName(s);
+                    if (ftag == null) {
+                        tagService.save(t);
+                        UserSpecialtyDetail usd = new UserSpecialtyDetail(user, t);
+                        userSpecialtyDetailService.save(usd);
+                    } else {
+                        UserSpecialtyDetail usd = new UserSpecialtyDetail(user, ftag);
+                        userSpecialtyDetailService.save(usd);
+                    }
                 }
-
             }
-        }
 
+        }
         return ResponseEntity.ok(new MessageResponse("1"));
     }
-
 
     @Override
     public List<ResponseEntity<?>> authorToReviewer(List<User> users) {
@@ -270,6 +284,22 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             }
         }
         return responses;
+    }
+
+    @Override
+    public ResponseEntity<?> confirmUser(String email, String password) {
+        Optional<User> fuser = userRepository.findByEmail(email);
+        if (!fuser.isPresent()) {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseMessage("User not found"));
+        } else if (fuser.get().getPassword() != null) {
+            return ResponseEntity.badRequest()
+                    .body(new ResponseMessage("Registration already confirmed"));
+        } else {
+            fuser.get().setPassword(password);
+            userRepository.save(fuser.get());
+            return ResponseEntity.ok(new ResponseMessage("Your account has been activated successfully"));
+        }
     }
 
 }

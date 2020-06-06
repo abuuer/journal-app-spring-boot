@@ -58,7 +58,10 @@ public class UserRest {
     public List<ResponseEntity<?>> authorToReviewer(@RequestBody List<User> users) {
         return userService.authorToReviewer(users);
     }
-    
-    
+
+    @PutMapping("/confirmUser/email/{email]/password/{password}")
+    public ResponseEntity<?> confirmUser(String email, String password) {
+        return userService.confirmUser(email, password);
+    }
 
 }

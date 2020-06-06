@@ -5,7 +5,6 @@
  */
 package com.journal.journal.security.payload.request;
 
-import com.journal.journal.bean.Tag;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 
@@ -16,13 +15,14 @@ import javax.validation.constraints.NotBlank;
 public class SignupRequest {
 
     @NotBlank
+    private String pseudo;
+    @NotBlank
     private String firstName;
     @NotBlank
     private String lastName;
     private String middleName;
     @NotBlank
-    private String email;
-    @NotBlank
+    private String email; 
     private String password;
     private String degree;
     private String adress;
@@ -43,6 +43,16 @@ public class SignupRequest {
 
     public SignupRequest() {
     }
+
+    public String getPseudo() {
+        return pseudo;
+    }
+
+    public void setPseudo(String pseudo) {
+        this.pseudo = pseudo;
+    }
+    
+    
 
     public List<String> getSpecialty() {
         return specialty;

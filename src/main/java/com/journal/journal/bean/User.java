@@ -29,6 +29,7 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
     private Long id;
+    private String pseudo;
     private String firstName;
     private String lastName;
     private String middleName;
@@ -62,12 +63,12 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(String firstName, String lastName, String middleName, String email, String password, String degree, String adress, String country, String region, String city, String postalCode, String phone, String fax, String institution, String departement, String instAdress, String instPhone) {
+    public User(String pseudo, String firstName, String lastName, String middleName, String email, String degree, String adress, String country, String region, String city, String postalCode, String phone, String fax, String institution, String departement, String instAdress, String instPhone) {
+        this.pseudo = pseudo;
         this.firstName = firstName;
         this.lastName = lastName;
         this.middleName = middleName;
         this.email = email;
-        this.password = password;
         this.degree = degree;
         this.adress = adress;
         this.country = country;
@@ -84,6 +85,14 @@ public class User implements Serializable {
 
     public Long getId() {
         return id;
+    }
+
+    public String getPseudo() {
+        return pseudo;
+    }
+
+    public void setPseudo(String pseudo) {
+        this.pseudo = pseudo;
     }
 
     public String getAvailability() {

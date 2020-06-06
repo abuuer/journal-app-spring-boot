@@ -18,17 +18,20 @@ import org.springframework.http.ResponseEntity;
  */
 public interface UserService {
 
-
     Optional<User> findByEmail(String email);
 
     boolean existsByEmail(String email);
 
     int save(User user);
 
-    public ResponseEntity<?> authenticateUser(LoginRequest loginRequest);
+    ResponseEntity<?> authenticateUser(LoginRequest loginRequest);
 
-    public ResponseEntity<?> registerUser(SignupRequest signUpRequest);
+    ResponseEntity<?> registerUser(SignupRequest signUpRequest);
     
-    public List<ResponseEntity<?>> authorToReviewer(List<User> users);
+    ResponseEntity<?> confirmUser(String email, String password);
+
+    List<ResponseEntity<?>> authorToReviewer(List<User> users);
+    
+    
 
 }

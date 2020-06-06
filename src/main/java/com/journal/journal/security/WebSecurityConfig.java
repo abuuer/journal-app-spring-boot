@@ -55,24 +55,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
+ 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public PasswordEncoder passwordEncoder() {  
+        return new BCryptPasswordEncoder();     
     }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
+        
+    @Override     
+    protected void configure(HttpSecurity http) throws Exception { 
+        http.cors().and().csrf().disable()  
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/journal-api/user/author/**")
-                .hasAnyAuthority("ROLE_USER", "ROLE_AUTHOR").antMatchers("/journal-api/file/**")
-                .permitAll().antMatchers("/journal-api/article/**").permitAll()
-                .antMatchers("/journal-api/user/**").permitAll().antMatchers("/journal-api/user-article/**")
-                .hasAnyAuthority("ROLE_USER", "ROLE_AUTHOR").antMatchers("/journal-api/user-role/**").permitAll()
-                .antMatchers("/journal-api/test/**").permitAll()
-                .anyRequest().authenticated();
+                .hasAnyAuthority("ROLE_USER", "ROLE_AUTHOR")
+                .antMatchers("/journal-api/file/**","/journal-api/article/**","/journal-api/user/**"
+                ,"/journal-api/user-role/**","/journal-api/test/**","/**")
+                .permitAll().antMatchers("/journal-api/user-article/**")
+                .hasAnyAuthority("ROLE_USER", "ROLE_AUTHOR").anyRequest().authenticated()
+                .and().formLogin().loginPage("/user/login").defaultSuccessUrl("/");
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }

@@ -7,8 +7,12 @@ package com.journal.journal.ws.rest;
 
 import com.journal.journal.bean.Tag;
 import com.journal.journal.bean.User;
+import com.journal.journal.email.service.EmailService;
 import com.journal.journal.service.facade.UserSpecialtyDetailService;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,6 +28,9 @@ public class TestController {
 
     @Autowired
     private UserSpecialtyDetailService userSpecialtyDetailService;
+    
+    @Autowired
+    private EmailService emailService;
 
   /*  @GetMapping("/id/{id}")
     public List<Tag> findTagByUserId(@PathVariable Long id) {
@@ -31,8 +38,16 @@ public class TestController {
         return userSpecialtyDetailService.findTagByUserId(id);
     }*/
 
-    
-    
+   /* @GetMapping("/to/{to}/subject/{subject}")
+    public void sendMessageUsingThymeleafTemplate(@PathVariable String to,@PathVariable String subject, Map<String, Object> templateModel) throws IOException, MessagingException {
+        emailService.sendMessageUsingThymeleafTemplate(to, subject, templateModel);
+    }*/
+
+    @GetMapping("/to/{to}/subject/{subject}/text/{text}")
+    public void sendSimpleMessage(@PathVariable String to,@PathVariable String subject,@PathVariable String text) {
+        emailService.sendSimpleMessage(to, subject, text);
+    }
+
     
     @GetMapping("/all")
     public String allAccess() {
