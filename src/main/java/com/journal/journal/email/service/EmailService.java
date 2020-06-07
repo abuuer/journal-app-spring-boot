@@ -5,9 +5,7 @@
  */
 package com.journal.journal.email.service;
 
-import com.journal.journal.bean.User;
 import java.io.IOException;
-import java.util.Map;
 import javax.mail.MessagingException;
 
 /**
@@ -16,7 +14,7 @@ import javax.mail.MessagingException;
  */
 public interface EmailService {
 
-    void sendMessageUsingThymeleafTemplate(String pseudo, String email, String lastName)
+    void sendMessageUsingThymeleafTemplate(String pseudo, String email, String lastName,String token)
             throws IOException, MessagingException;
 
     public void sendSimpleMessage(String to, String subject, String text);

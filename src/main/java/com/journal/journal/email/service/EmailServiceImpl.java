@@ -45,11 +45,13 @@ public class EmailServiceImpl implements EmailService{
 
 
     @Override
-    public void sendMessageUsingThymeleafTemplate(String pseudo, String email, String lastName)
+    public void sendMessageUsingThymeleafTemplate(String pseudo, String email, String lastName, String token)
             throws MessagingException {
 
+        String confirmationUrl = "http://localhost:8080/regitrationConfirm?token="+ token;
         Context thymeleafContext = new Context();
         Map model = new HashMap();
+        model.put("confirmationUrl", confirmationUrl);
         model.put("lastName", lastName);
         model.put("prefix", pseudo);
         model.put("email", email);

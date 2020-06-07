@@ -41,8 +41,8 @@
             <tr>
                 <td>
                     <p>Your user name and password for  the account is as follows:</p>
-                    <span>Email: </span><a href="" th:text="${email}"></a>
-                    <p th:text="'Password: Some link '"></p>
+                    <p href="" th:text="'Email: '+ ${email}"></p>
+                    <p th:text="'Password: '+ ${confirmationUrl}"></p>
                 </td>
             </tr>
             <br>

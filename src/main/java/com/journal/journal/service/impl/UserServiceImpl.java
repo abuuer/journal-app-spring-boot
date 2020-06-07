@@ -5,6 +5,7 @@
  */
 package com.journal.journal.service.impl;
 
+import com.journal.journal.bean.AccountActivation;
 import com.journal.journal.bean.ERole;
 import com.journal.journal.bean.Role;
 import com.journal.journal.bean.Tag;
@@ -12,6 +13,7 @@ import com.journal.journal.bean.User;
 import com.journal.journal.bean.UserDetailsImpl;
 import com.journal.journal.bean.UserRoleDetail;
 import com.journal.journal.bean.UserSpecialtyDetail;
+import com.journal.journal.dao.AccountActivationRepository;
 import com.journal.journal.dao.UserRepository;
 import com.journal.journal.email.service.EmailService;
 import com.journal.journal.message.ResponseMessage;
@@ -27,8 +29,10 @@ import com.journal.journal.service.facade.UserService;
 import com.journal.journal.service.facade.UserSpecialtyDetailService;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -83,6 +87,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private AccountActivationRepository accountActivation;
 
     @Override
     public Optional<User> findByEmail(String email) {
@@ -142,7 +149,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                     .badRequest()
                     .body(new MessageResponse("-1"));
         }
-        // encoder.encode(signUpRequest.getPassword())
         // Create new user's account
         User user = new User(signUpRequest.getPseudo(), signUpRequest.getFirstName(), signUpRequest.getLastName(),
                 signUpRequest.getMiddleName(), signUpRequest.getEmail(), signUpRequest.getDegree(), signUpRequest.getAdress(),
@@ -187,11 +193,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 }
             });
         }
-        try {
-            emailService.sendMessageUsingThymeleafTemplate(user.getPseudo(), user.getEmail(), user.getLastName());
-        } catch (IOException | MessagingException ex) {
-            Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
         if (fUser.isPresent() && fUser.get().getPassword() == null) {
             fUser.get().setFirstName(user.getFirstName());
             fUser.get().setLastName(user.getLastName());
@@ -262,6 +264,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             }
 
         }
+        String token = UUID.randomUUID().toString();
+        AccountActivation accountAct = new AccountActivation(token, user);
+        accountActivation.save(accountAct);
+        try {
+            emailService.sendMessageUsingThymeleafTemplate(user.getPseudo(),
+                    user.getEmail(), user.getLastName(), token);
+        } catch (IOException | MessagingException ex) {
+            Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return ResponseEntity.ok(new MessageResponse("1"));
     }
 
@@ -300,6 +311,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             userRepository.save(fuser.get());
             return ResponseEntity.ok(new ResponseMessage("Your account has been activated successfully"));
         }
+    }
+
+    @Override
+    public ResponseEntity<?> confirmRegistraion(String token, String password) {
+        AccountActivation accountAct = accountActivation.findByToken(token);
+
+        Calendar cal = Calendar.getInstance();
+        if (accountAct == null) {
+            return ResponseEntity.badRequest().body(new ResponseMessage("InvalidToken"));
+        }
+        if ((accountAct.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            return ResponseEntity.badRequest().body(new ResponseMessage("Expired Token"));
+        }
+        User user = accountAct.getUser();
+        user.setPassword(encoder.encode(password));
+        user.setVerified(true);
+        userRepository.save(user);
+        return ResponseEntity.ok(new ResponseMessage("Confirmed successfully"));
     }
 
 }

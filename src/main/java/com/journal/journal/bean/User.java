@@ -5,7 +5,6 @@
  */
 package com.journal.journal.bean;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
@@ -49,6 +48,7 @@ public class User implements Serializable {
     private String instAdress;
     private String instPhone;
     private String availability;
+    private boolean verified;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
@@ -81,8 +81,18 @@ public class User implements Serializable {
         this.departement = departement;
         this.instAdress = instAdress;
         this.instPhone = instPhone;
+        this.verified = false;
     }
 
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
+    }
+
+    
     public Long getId() {
         return id;
     }

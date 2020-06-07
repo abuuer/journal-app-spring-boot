@@ -32,6 +32,8 @@ public interface UserService {
 
     List<ResponseEntity<?>> authorToReviewer(List<User> users);
     
+    ResponseEntity<?> confirmRegistraion(String token, String password);
+    
     
 
 }

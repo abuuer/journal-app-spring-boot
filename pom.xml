@@ -95,6 +95,12 @@
             <version>5.2.6.RELEASE</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>2.2.3</version>
+            <type>jar</type>
+        </dependency>
     </dependencies> 
 
     <build>

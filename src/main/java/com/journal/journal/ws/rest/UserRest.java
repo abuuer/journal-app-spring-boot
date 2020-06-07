@@ -64,4 +64,10 @@ public class UserRest {
         return userService.confirmUser(email, password);
     }
 
+    @PutMapping("/confirmRegistraion/token/{token}/password/{password}")
+    public ResponseEntity<?> confirmRegistraion(@PathVariable String token,@PathVariable String password) {
+        return userService.confirmRegistraion(token,password);
+    }
+    
+    
 }
