@@ -48,7 +48,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendMessageUsingThymeleafTemplate(String pseudo, String email, String lastName, String token)
             throws MessagingException {
 
-        String confirmationUrl = "http://localhost:8080/regitrationConfirm?token="+ token;
+        String confirmationUrl = "http://localhost:8080/confirm?token="+ token;
         Context thymeleafContext = new Context();
         Map model = new HashMap();
         model.put("confirmationUrl", confirmationUrl);

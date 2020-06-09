@@ -10,12 +10,14 @@ import com.journal.journal.bean.User;
 import com.journal.journal.bean.UserRoleDetail;
 import com.journal.journal.bean.UserSpecialtyDetail;
 import com.journal.journal.dao.UserSpecialtyDetailRepository;
+import com.journal.journal.security.payload.response.MessageResponse;
 import com.journal.journal.service.facade.UserService;
 import com.journal.journal.service.facade.UserSpecialtyDetailService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 /**
@@ -54,6 +56,25 @@ public class UserSpecialtyDetailImpl implements UserSpecialtyDetailService {
     @Override
     public List<UserSpecialtyDetail> findByUser_Email(String email) {
         return repository.findByUser_Email(email);
+    }
+
+    @Override
+    public ResponseEntity<?> deleteByUser_Email(String email) {
+         Optional<User> fUser = userService.findByEmail(email);
+        if (!fUser.isPresent()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("User doesn't exist"));
+        } else {
+            repository.deleteByUser_Email(email);
+            return ResponseEntity.ok(new MessageResponse(fUser.get().getFirstName() + " "
+                    + fUser.get().getLastName() + " is dismissed"));
+        }
+    }
+
+    @Override
+    public void delete(UserSpecialtyDetail userSpecialtyDetail) {
+        repository.delete(userSpecialtyDetail);
     }
 
    

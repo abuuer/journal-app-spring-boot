@@ -85,21 +85,26 @@ public class ArticleServiceImpl implements ArticleService {
                 for (UserArticleDetail userArticleDetail : article.getUserArticleDetails()) {
                     Optional<User> fUser = userService.findByEmail(userArticleDetail.getUser().getEmail());
                     // save user speacialty from article submission
-                    List<Tag> s = userSpecialtyDetailService.findTagByUser_Email(fUser.get().getEmail());
+					if(fUser.isPresent()){
+						UserArticleDetail uad = new UserArticleDetail("Author", fUser.get(), article);
+                        userArticleDetailService.save(uad);
+						List<Tag> s = userSpecialtyDetailService.findTagByUser_Email(fUser.get().getEmail());
                     for (Tag tag : tags) {
                         if (!s.contains(tag)) {
                             UserSpecialtyDetail usd = new UserSpecialtyDetail(fUser.get(), tag);
                             userSpecialtyDetailService.save(usd);
                         }
                     }
-                    if (!fUser.isPresent()) {
-                        userService.save(userArticleDetail.getUser());
+					}else {
+						userService.save(userArticleDetail.getUser());
+						for (Tag tag : tags) {
+                            UserSpecialtyDetail usd = new UserSpecialtyDetail(userArticleDetail.getUser(), tag);
+                            userSpecialtyDetailService.save(usd);
+                         }
                         UserArticleDetail uad = new UserArticleDetail("Author", userArticleDetail.getUser(), article);
                         userArticleDetailService.save(uad);
-                    } else {
-                        UserArticleDetail uad = new UserArticleDetail("Author", fUser.get(), article);
-                        userArticleDetailService.save(uad);
-                    }
+						userService.save(userArticleDetail.getUser());
+					}
                 }
             } else {
                 return -3;
@@ -146,6 +151,11 @@ public class ArticleServiceImpl implements ArticleService {
 	@Override
     public ResponseEntity<?> dismissReviewer(String articleRef, Long id) {
         return ResponseEntity.ok(new MessageResponse("Assigned "));
+    }
+
+    @Override
+    public Article findByReference(String referenece) {
+        return articleRepository.findByReference(referenece);
     }
 
 }

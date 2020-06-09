@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
+import com.journal.journal.bean.Article;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -30,6 +30,7 @@ import org.springframework.util.FileSystemUtils;
 import com.journal.journal.service.facade.FileInfoService;
 import com.journal.journal.ws.rest.FileRest;
 import java.util.Optional;
+import com.journal.journal.service.facade.ArticleService;
 import java.util.Random;
 
 /**
@@ -42,6 +43,9 @@ public class FileInfoServiceImpl implements FileInfoService {
     @Autowired
     private FileInfoRepository fileInfoRepository;
 
+    @Autowired
+    private ArticleService articleService;
+	
     private final Path root = Paths.get("uploads");
 
     @Override
@@ -148,8 +152,9 @@ public class FileInfoServiceImpl implements FileInfoService {
     @Override
     public void save(FileInfo file) {
         FileInfo fFile = fileInfoRepository.findByUrl(file.getUrl());
+		Article farticle = articleService.findByReference(file.getArticle().getReference());
         if(fFile != null && fFile.getArticle() == null){
-            fFile.setArticle(file.getArticle());
+            fFile.setArticle(farticle);
             fileInfoRepository.save(fFile);
         }else {
             fileInfoRepository.save(file);

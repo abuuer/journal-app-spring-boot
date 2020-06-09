@@ -10,6 +10,7 @@ import com.journal.journal.bean.ERole;
 import com.journal.journal.bean.Role;
 import com.journal.journal.bean.Tag;
 import com.journal.journal.bean.User;
+import com.journal.journal.bean.UserArticleDetail;
 import com.journal.journal.bean.UserDetailsImpl;
 import com.journal.journal.bean.UserRoleDetail;
 import com.journal.journal.bean.UserSpecialtyDetail;
@@ -24,6 +25,7 @@ import com.journal.journal.security.payload.response.JwtResponse;
 import com.journal.journal.security.payload.response.MessageResponse;
 import com.journal.journal.service.facade.RoleService;
 import com.journal.journal.service.facade.TagService;
+import com.journal.journal.service.facade.UserArticleDetailService;
 import com.journal.journal.service.facade.UserRoleDetailService;
 import com.journal.journal.service.facade.UserService;
 import com.journal.journal.service.facade.UserSpecialtyDetailService;
@@ -90,6 +92,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     private AccountActivationRepository accountActivation;
+
+    @Autowired
+    private UserArticleDetailService userArticleDetailService;
 
     @Override
     public Optional<User> findByEmail(String email) {
@@ -189,12 +194,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                     default:
                         Role userRole = roleService.findByName(ERole.ROLE_USER)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        Role authorRoleDef = roleService.findByName(ERole.ROLE_AUTHOR)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(userRole);
+                        roles.add(authorRoleDef);
                 }
             });
         }
 
         if (fUser.isPresent() && fUser.get().getPassword() == null) {
+
             fUser.get().setFirstName(user.getFirstName());
             fUser.get().setLastName(user.getLastName());
             fUser.get().setMiddleName(user.getMiddleName());
@@ -211,6 +220,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             fUser.get().setInstAdress(user.getInstAdress());
             fUser.get().setInstPhone(user.getInstPhone());
             save(fUser.get());
+            String token = UUID.randomUUID().toString();
+            AccountActivation accountAct = new AccountActivation(token, user);
+            accountActivation.save(accountAct);
+            try {
+                emailService.sendMessageUsingThymeleafTemplate(user.getPseudo(),
+                        user.getEmail(), user.getLastName(), token);
+            } catch (IOException | MessagingException ex) {
+                Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
             roles.stream().map((role) -> {
                 UserRoleDetail userRoleDetail = new UserRoleDetail();
                 userRoleDetail.setRole(role);
@@ -238,6 +256,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         } else {
             save(user);
+
+            String token = UUID.randomUUID().toString();
+            AccountActivation accountAct = new AccountActivation(token, user);
+            accountActivation.save(accountAct);
+            try {
+                emailService.sendMessageUsingThymeleafTemplate(user.getPseudo(),
+                        user.getEmail(), user.getLastName(), token);
+            } catch (IOException | MessagingException ex) {
+                Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
             roles.stream().map((role) -> {
                 UserRoleDetail userRoleDetail = new UserRoleDetail();
                 userRoleDetail.setRole(role);
@@ -264,37 +292,32 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             }
 
         }
-        String token = UUID.randomUUID().toString();
-        AccountActivation accountAct = new AccountActivation(token, user);
-        accountActivation.save(accountAct);
-        try {
-            emailService.sendMessageUsingThymeleafTemplate(user.getPseudo(),
-                    user.getEmail(), user.getLastName(), token);
-        } catch (IOException | MessagingException ex) {
-            Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-        }
         return ResponseEntity.ok(new MessageResponse("1"));
     }
 
     @Override
-    public List<ResponseEntity<?>> authorToReviewer(List<User> users) {
-        List<ResponseEntity<?>> responses = new ArrayList<>();
-        for (User user : users) {
-            Optional<User> fAuthor = userRepository.findByEmail(user.getEmail());
-            List<UserRoleDetail> userRoleDetail = userRoleDetailService.findByUser_Email(user.getEmail());
-            if (!fAuthor.isPresent()) {
-                responses.add(ResponseEntity.badRequest().body(new MessageResponse("Author doesn't exist")));
+    public ResponseEntity<?> authorToReviewer(String email) {
+        Optional<User> fAuthor = userRepository.findByEmail(email);
+        List<UserRoleDetail> userRoleDetails = userRoleDetailService.findByUser_Email(email);
+        List<Role> roles = new ArrayList<>();
+        for (UserRoleDetail furd : userRoleDetails) {
+            roles.add(furd.getRole());
+        }
+        if (!fAuthor.isPresent()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Author doesn't exist"));
+        } else {
+            Role reviewerRole = roleService.findByName(ERole.ROLE_REVIEWER).get();
+            UserRoleDetail urd = new UserRoleDetail(fAuthor.get(), reviewerRole);
+            if (roles.contains(reviewerRole)) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Author is already a reviewer"));
             } else {
-                Role reviewerRole = roleService.findByName(ERole.ROLE_REVIEWER).get();
-                UserRoleDetail urd = new UserRoleDetail(fAuthor.get(), reviewerRole);
                 userRoleDetailService.save(urd);
                 fAuthor.get().setAvailability("Available");
                 userRepository.save(fAuthor.get());
-                responses.add(ResponseEntity.badRequest().body(new MessageResponse(fAuthor.get().getLastName()
-                        + " " + fAuthor.get().getFirstName() + " is a reviewer now!")));
+                return ResponseEntity.ok(new MessageResponse(fAuthor.get().getLastName()
+                        + " " + fAuthor.get().getFirstName() + " is a reviewer now!"));
             }
         }
-        return responses;
     }
 
     @Override
@@ -319,16 +342,65 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         Calendar cal = Calendar.getInstance();
         if (accountAct == null) {
-            return ResponseEntity.badRequest().body(new ResponseMessage("InvalidToken"));
+            return ResponseEntity.badRequest().body(new ResponseMessage("The invitation link "
+                    + "isn't valid. Perhaps it has been already used!"));
         }
         if ((accountAct.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
             return ResponseEntity.badRequest().body(new ResponseMessage("Expired Token"));
         }
         User user = accountAct.getUser();
+        accountActivation.delete(accountAct);
         user.setPassword(encoder.encode(password));
         user.setVerified(true);
         userRepository.save(user);
         return ResponseEntity.ok(new ResponseMessage("Confirmed successfully"));
+    }
+
+    @Override
+    public ResponseEntity<?> deleteAccount(String email) {
+        Optional<User> fuser = userRepository.findByEmail(email);
+        List<UserRoleDetail> fuserRoles = userRoleDetailService.findByUser_Email(email);
+
+        if (!fuser.isPresent()) {
+            return ResponseEntity.badRequest().body(new ResponseMessage("User doesn't exist"));
+        } else if (fuser.get().getPassword() == null) {
+            return ResponseEntity.badRequest().body(new ResponseMessage("User already deleted"));
+        } else {
+            for (UserRoleDetail fuserRole : fuserRoles) {
+                userRoleDetailService.delete(fuserRole);
+            }
+            fuser.get().setPassword(null);
+            userRepository.save(fuser.get());
+            return ResponseEntity.ok(new ResponseMessage("User deleted successfully"));
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> dismissReviewer(String email) {
+        Optional<User> fuser = userRepository.findByEmail(email);
+        if (!fuser.isPresent()) {
+            return ResponseEntity.badRequest().body(new ResponseMessage("USER NOT FOUND"));
+        } else {
+            List<UserRoleDetail> fRoleDetails = userRoleDetailService.findByUser_Email(email);
+            UserRoleDetail fuserRole = new UserRoleDetail();
+            List<Role> roles = new ArrayList<>();
+            fRoleDetails.forEach((fRoleDetail) -> {
+                roles.add(fRoleDetail.getRole());
+                if(fRoleDetail.getRole().getName() == ERole.ROLE_REVIEWER){
+                    fuserRole.setId(fRoleDetail.getId());
+                    fuserRole.setRole(fRoleDetail.getRole());
+                    fuserRole.setUser(fRoleDetail.getUser());
+                }
+            });
+            if (!roles.contains(roleService.findByName(ERole.ROLE_REVIEWER).get())) {
+                return ResponseEntity.badRequest().body(new ResponseMessage("User is not a reviewer"));
+            } else {
+                userRoleDetailService.delete(fuserRole);
+                return ResponseEntity.ok(new MessageResponse(fuser.get().getLastName()
+                        + " " + fuser.get().getFirstName() + " is dismissed as a reviewer"));
+            }
+        }
+
     }
 
 }

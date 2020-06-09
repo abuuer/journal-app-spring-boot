@@ -30,10 +30,12 @@ public interface UserService {
     
     ResponseEntity<?> confirmUser(String email, String password);
 
-    List<ResponseEntity<?>> authorToReviewer(List<User> users);
+    ResponseEntity<?> authorToReviewer(String email);
     
     ResponseEntity<?> confirmRegistraion(String token, String password);
     
+    ResponseEntity<?> deleteAccount(String email);
     
-
+    ResponseEntity<?> dismissReviewer(String email);
+    
 }

@@ -10,6 +10,7 @@ import com.journal.journal.bean.UserSpecialtyDetail;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -19,5 +20,7 @@ import org.springframework.stereotype.Repository;
 public interface UserSpecialtyDetailRepository extends JpaRepository<UserSpecialtyDetail, Long> {
 
     List<UserSpecialtyDetail> findByUser_Email(String email);
-
+    
+    @Transactional
+    void deleteByUser_Email(String email);
 }

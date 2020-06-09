@@ -8,6 +8,7 @@ package com.journal.journal.service.facade;
 import com.journal.journal.bean.Tag;
 import com.journal.journal.bean.UserSpecialtyDetail;
 import java.util.List;
+import org.springframework.http.ResponseEntity;
 
 /**
  *
@@ -20,4 +21,8 @@ public interface UserSpecialtyDetailService {
     List<Tag> findTagByUser_Email(String email);
 
     void save(UserSpecialtyDetail userSpecialtyDetail);
+    
+    ResponseEntity<?> deleteByUser_Email(String email);
+    
+    void delete(UserSpecialtyDetail userSpecialtyDetail);
 }

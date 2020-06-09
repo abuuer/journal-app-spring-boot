@@ -26,5 +26,8 @@ public interface UserArticleDetailService {
 
     List<Article> findAllArticlesByAuthor(String email);
     
-    ResponseEntity<?> deleteByUser_Email(String email);
+    ResponseEntity<?> eleteByUser_EmailAndArticle_Reference(String email, String reference);
+    
+    void delete(UserArticleDetail userArticleDetail);
+    
 }

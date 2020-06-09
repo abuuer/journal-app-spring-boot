@@ -9,6 +9,7 @@ import com.journal.journal.bean.ERole;
 import com.journal.journal.bean.User;
 import com.journal.journal.bean.UserRoleDetail;
 import java.util.List;
+import org.springframework.http.ResponseEntity;
 
 /**
  *
@@ -25,5 +26,9 @@ public interface UserRoleDetailService {
     List<User> findAllReviewers();
     
     List<User> findAllAuthors();
+    
+    ResponseEntity<?> deleteByUser_Email(String email);
+    
+    void delete(UserRoleDetail uerRoleDetail);
 
 }

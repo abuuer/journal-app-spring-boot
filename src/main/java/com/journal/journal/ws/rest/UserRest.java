@@ -6,19 +6,18 @@
 package com.journal.journal.ws.rest;
 
 import com.journal.journal.bean.User;
-import com.journal.journal.bean.UserArticleDetail;
 import com.journal.journal.security.payload.request.LoginRequest;
 import com.journal.journal.security.payload.request.SignupRequest;
-import com.journal.journal.service.facade.UserArticleDetailService;
 import com.journal.journal.service.facade.UserService;
-import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,9 +53,9 @@ public class UserRest {
         return userService.findByEmail(email);
     }
 
-    @PutMapping("/authorToReviewer/")
-    public List<ResponseEntity<?>> authorToReviewer(@RequestBody List<User> users) {
-        return userService.authorToReviewer(users);
+    @PutMapping("/authorToReviewer/email/{email}")
+    public ResponseEntity<?> authorToReviewer(@PathVariable String email) {
+        return userService.authorToReviewer(email);
     }
 
     @PutMapping("/confirmUser/email/{email]/password/{password}")
@@ -68,6 +67,21 @@ public class UserRest {
     public ResponseEntity<?> confirmRegistraion(@PathVariable String token,@PathVariable String password) {
         return userService.confirmRegistraion(token,password);
     }
+
+    @Transactional
+    @DeleteMapping("/deleteAccount/email/{email}")
+    public ResponseEntity<?> deleteAccount(@PathVariable String email) {
+        return userService.deleteAccount(email);
+    }
+
+    @DeleteMapping("/dismissReviewer/email/{email}")
+    @Transactional
+    public ResponseEntity<?> dismissReviewer(@PathVariable String email) {
+        return userService.dismissReviewer(email);
+    }
+    
+    
+    
     
     
 }

@@ -10,6 +10,7 @@ import com.journal.journal.bean.UserRoleDetail;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -21,4 +22,7 @@ public interface UserRoleDetailRepository extends JpaRepository<UserRoleDetail, 
     List<UserRoleDetail> findByUser_Email(String email);
     
     List<UserRoleDetail> findByRole_Name(ERole name);
+    
+    @Transactional
+    void deleteByUser_Email(String email);
 }

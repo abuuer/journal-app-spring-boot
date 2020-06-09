@@ -18,6 +18,8 @@ public interface ArticleService {
     public int save(Article article);
 
     public List<Article> findAll();
+    
+    public Article findByReference(String referenece);
 
     public ResponseEntity<?> assignReviewer(String articleRef, String email);
 
