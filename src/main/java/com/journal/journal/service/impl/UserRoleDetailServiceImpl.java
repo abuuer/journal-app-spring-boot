@@ -59,7 +59,7 @@ public class UserRoleDetailServiceImpl implements UserRoleDetailService {
         
     }
 
-    @Override
+    @Override 
     public List<User> findAllAuthors() {
         List<UserRoleDetail> urd = findByRole_Name(ERole.ROLE_AUTHOR);
         if(urd == null){

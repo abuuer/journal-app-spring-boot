@@ -79,6 +79,11 @@ public class UserRest {
     public ResponseEntity<?> dismissReviewer(@PathVariable String email) {
         return userService.dismissReviewer(email);
     }
+
+    @PutMapping("/updateStatus/email/{email}/email/{status}")
+    public ResponseEntity<?> updateStatus(@PathVariable String email,@PathVariable String status) {
+        return userService.updateStatus(email, status);
+    }
     
     
     

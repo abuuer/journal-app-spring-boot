@@ -38,4 +38,6 @@ public interface UserService {
     
     ResponseEntity<?> dismissReviewer(String email);
     
+     ResponseEntity<?> updateStatus(String email, String status);
+    
 }

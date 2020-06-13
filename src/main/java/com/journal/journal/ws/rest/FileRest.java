@@ -54,5 +54,7 @@ public class FileRest {
     public void save(@RequestBody FileInfo file) {
         fileService.save(file);
     }
+    
+    
 
 }

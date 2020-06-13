@@ -403,4 +403,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     }
 
+    @Override
+    public ResponseEntity<?> updateStatus(String email, String status) {
+        Optional<User> fuser = userRepository.findByEmail(email);
+        if(!fuser.isPresent()){
+            return ResponseEntity.badRequest().body(new ResponseMessage("User is not found"));
+        }else if(!status.equals("busy") ||!status.equals("available") ||!status.equals("not available")) {
+            return ResponseEntity.badRequest().body(new ResponseMessage("Status is not valid"));
+        }else {
+            fuser.get().setAvailability(status);
+            userRepository.save(fuser.get());
+            return ResponseEntity.ok(new MessageResponse("Updates status to " + status));
+        }
+    }
+
 }

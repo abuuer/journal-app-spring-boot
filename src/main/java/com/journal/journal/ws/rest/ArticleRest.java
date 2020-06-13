@@ -44,5 +44,18 @@ public class ArticleRest {
     public ResponseEntity<?> assignReviewer(@PathVariable String articleRef,@PathVariable String email) {
         return articleService.assignReviewer(articleRef,email);
     }
+
+    @PutMapping("/dismissReviewer/articleRef/{articleRef}/id/{id}")
+    public ResponseEntity<?> dismissReviewer(String articleRef, Long id){
+        return articleService.dismissReviewer(articleRef, id);
+    }
+
+    @PutMapping("/updateStatus/articleRef/{articleRef}/status/{status}")
+    public ResponseEntity<?> updateStatus(@PathVariable String articleRef,@PathVariable String status) {
+        return articleService.updateStatus(articleRef, status);
+    }
+    
+    
+    
     
 }

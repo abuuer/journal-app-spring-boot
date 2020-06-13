@@ -31,6 +31,7 @@ import com.journal.journal.service.facade.FileInfoService;
 import com.journal.journal.ws.rest.FileRest;
 import java.util.Optional;
 import com.journal.journal.service.facade.ArticleService;
+import com.journal.journal.service.facade.UserArticleDetailService;
 import java.util.Random;
 
 /**
@@ -45,7 +46,10 @@ public class FileInfoServiceImpl implements FileInfoService {
 
     @Autowired
     private ArticleService articleService;
-	
+    
+    @Autowired
+    private UserArticleDetailService userArticleDetailService;
+
     private final Path root = Paths.get("uploads");
 
     @Override
@@ -98,7 +102,7 @@ public class FileInfoServiceImpl implements FileInfoService {
             Resource currentfile = loadFile(file.getOriginalFilename());
             //MvcUriComponentsBuilder used tp generate url
             String url = MvcUriComponentsBuilder.fromMethodName(FileRest.class, "getFile",
-                     randomeString() + "_" + currentfile.getFilename() + "_" + randomeString()).build().toString();
+                    randomeString() + "_" + currentfile.getFilename() + "_" + randomeString()).build().toString();
             FileInfo newFile = new FileInfo(currentfile.getFilename(), url, fileType);
             saveInfo(newFile);
 
@@ -149,16 +153,26 @@ public class FileInfoServiceImpl implements FileInfoService {
 
     }
 
-    @Override
+     @Override
     public void save(FileInfo file) {
         FileInfo fFile = fileInfoRepository.findByUrl(file.getUrl());
-		Article farticle = articleService.findByReference(file.getArticle().getReference());
-        if(fFile != null && fFile.getArticle() == null){
+        Article farticle = articleService.findByReference(file.getArticle().getReference());
+        boolean statusCheck = updateStatus(farticle);
+        if (fFile != null && fFile.getArticle() == null) {
             fFile.setArticle(farticle);
             fileInfoRepository.save(fFile);
-        }else {
+        } else {
             fileInfoRepository.save(file);
         }
+        if (statusCheck == true) {
+            farticle.setStatus("Reviewed");
+            articleService.save(farticle);
+        }
+    }
+
+    private boolean updateStatus(Article article) {
+        return userArticleDetailService.countReviewers(article.getId().intValue())
+                == countReviews(article.getId().intValue());
     }
 
     @Override
@@ -185,5 +199,10 @@ public class FileInfoServiceImpl implements FileInfoService {
     public ResponseEntity<?> deleteByUrl(String url) {
         fileInfoRepository.deleteByUrl(url);
         return ResponseEntity.ok(new ResponseMessage("File deleted successfully"));
+    }
+
+    @Override
+    public int countReviews(int articleId) {
+        return fileInfoRepository.countReviews(articleId);
     }
 }

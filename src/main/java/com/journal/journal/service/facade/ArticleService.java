@@ -24,5 +24,7 @@ public interface ArticleService {
     public ResponseEntity<?> assignReviewer(String articleRef, String email);
 
     public ResponseEntity<?> dismissReviewer(String articleRef, Long id);
+    
+    public ResponseEntity<?> updateStatus(String articleRef, String status);
 
 }

@@ -8,6 +8,7 @@ package com.journal.journal.bean;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -48,6 +49,7 @@ public class User implements Serializable {
     private String instAdress;
     private String instPhone;
     private String availability;
+    private Date registrationDate;
     private boolean verified;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -82,6 +84,7 @@ public class User implements Serializable {
         this.instAdress = instAdress;
         this.instPhone = instPhone;
         this.verified = false;
+        this.registrationDate = new Date();
     }
 
     public boolean isVerified() {
@@ -92,7 +95,14 @@ public class User implements Serializable {
         this.verified = verified;
     }
 
-    
+    public Date getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(Date registrationDate) {
+        this.registrationDate = registrationDate;
+    }
+
     public Long getId() {
         return id;
     }

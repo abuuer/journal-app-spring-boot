@@ -95,5 +95,10 @@ public class UserArticleDetailServiceImpl implements UserArticleDetailService {
     public void delete(UserArticleDetail userArticleDetail) {
         repository.delete(userArticleDetail);
     }
+    
+    @Override
+    public int countReviewers(int articleId) {
+        return repository.countReviewers(articleId);
+    }
 
 }

@@ -85,26 +85,26 @@ public class ArticleServiceImpl implements ArticleService {
                 for (UserArticleDetail userArticleDetail : article.getUserArticleDetails()) {
                     Optional<User> fUser = userService.findByEmail(userArticleDetail.getUser().getEmail());
                     // save user speacialty from article submission
-					if(fUser.isPresent()){
-						UserArticleDetail uad = new UserArticleDetail("Author", fUser.get(), article);
+                    if (fUser.isPresent()) {
+                        UserArticleDetail uad = new UserArticleDetail("Author", fUser.get(), article);
                         userArticleDetailService.save(uad);
-						List<Tag> s = userSpecialtyDetailService.findTagByUser_Email(fUser.get().getEmail());
-                    for (Tag tag : tags) {
-                        if (!s.contains(tag)) {
-                            UserSpecialtyDetail usd = new UserSpecialtyDetail(fUser.get(), tag);
-                            userSpecialtyDetailService.save(usd);
+                        List<String> tagNames = userSpecialtyDetailService.findTagByUser_Email(fUser.get().getEmail());
+                        for (Tag tag : tags) {
+                            if (!tagNames.contains(tag.getName())) {
+                                UserSpecialtyDetail usd = new UserSpecialtyDetail(fUser.get(), tag);
+                                userSpecialtyDetailService.save(usd);
+                            }
                         }
-                    }
-					}else {
-						userService.save(userArticleDetail.getUser());
-						for (Tag tag : tags) {
+                    } else {
+                        userService.save(userArticleDetail.getUser());
+                        for (Tag tag : tags) {
                             UserSpecialtyDetail usd = new UserSpecialtyDetail(userArticleDetail.getUser(), tag);
                             userSpecialtyDetailService.save(usd);
-                         }
+                        }
                         UserArticleDetail uad = new UserArticleDetail("Author", userArticleDetail.getUser(), article);
                         userArticleDetailService.save(uad);
-						userService.save(userArticleDetail.getUser());
-					}
+                        userService.save(userArticleDetail.getUser());
+                    }
                 }
             } else {
                 return -3;
@@ -122,9 +122,16 @@ public class ArticleServiceImpl implements ArticleService {
     public ResponseEntity<?> assignReviewer(String articleRef, String email) {
         Article fArticle = articleRepository.findByReference(articleRef);
         List<UserArticleDetail> userArticles = userArticleDetailService.findByArticle_Reference(articleRef);
+        List<UserArticleDetail> userArticlesRelatedToReviewer = userArticleDetailService.findByUser_Email(email);
         List<User> freviewers = new ArrayList<>();
-        for (UserArticleDetail userArticle : userArticles) {
+        List<UserArticleDetail> revUad = new ArrayList<>();
+        userArticles.forEach((userArticle) -> {
             freviewers.add(userArticle.getUser());
+        });
+        for (UserArticleDetail userArticleDetail : userArticlesRelatedToReviewer) {
+            if (userArticleDetail.getFunction().toLowerCase().equals("reviewer")) {
+                revUad.add(userArticleDetail);
+            }
         }
         Optional<User> freviewer = userService.findByEmail(email);
         if (!freviewer.isPresent()) {
@@ -142,13 +149,17 @@ public class ArticleServiceImpl implements ArticleService {
                     .body(new MessageResponse("Article doesn't exist"));
         } else {
             UserArticleDetail uad = new UserArticleDetail("Reviewer", freviewer.get(), fArticle);
+            fArticle.setStatus("being reviewed");
             userArticleDetailService.save(uad);
+            if (revUad.size() > 5) {
+                freviewer.get().setAvailability("busy");
+            }
             return ResponseEntity.ok(new MessageResponse("Assigned " + freviewer.get().getFirstName() + " "
                     + freviewer.get().getLastName() + " to the article"));
         }
     }
-	
-	@Override
+
+    @Override
     public ResponseEntity<?> dismissReviewer(String articleRef, Long id) {
         return ResponseEntity.ok(new MessageResponse("Assigned "));
     }
@@ -156,6 +167,20 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public Article findByReference(String referenece) {
         return articleRepository.findByReference(referenece);
+    }
+
+    @Override
+    public ResponseEntity<?> updateStatus(String articleRef, String status) {
+        Article farticle = articleRepository.findByReference(articleRef);
+        if (farticle == null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Article doesn't exist"));
+        } else {
+            farticle.setStatus(status);
+            articleRepository.save(farticle);
+            return ResponseEntity.ok(new MessageResponse("Status updated to " + status));
+        }
     }
 
 }

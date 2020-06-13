@@ -18,7 +18,7 @@ public interface UserSpecialtyDetailService {
 
     List<UserSpecialtyDetail> findByUser_Email(String email);
 
-    List<Tag> findTagByUser_Email(String email);
+    List<String> findTagByUser_Email(String email);
 
     void save(UserSpecialtyDetail userSpecialtyDetail);
     

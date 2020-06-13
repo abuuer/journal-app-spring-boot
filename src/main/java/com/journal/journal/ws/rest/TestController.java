@@ -32,12 +32,12 @@ public class TestController {
     @Autowired
     private EmailService emailService;
 
-  /*  @GetMapping("/id/{id}")
-    public List<Tag> findTagByUserId(@PathVariable Long id) {
-        System.out.println(id);
-        return userSpecialtyDetailService.findTagByUserId(id);
-    }*/
+    @GetMapping("/email/{email}")
+    public List<String> findTagByUser_Email(@PathVariable String email) {
+        return userSpecialtyDetailService.findTagByUser_Email(email);
+    }
 
+   
    /* @GetMapping("/to/{to}/subject/{subject}")
     public void sendMessageUsingThymeleafTemplate(@PathVariable String to,@PathVariable String subject, Map<String, Object> templateModel) throws IOException, MessagingException {
         emailService.sendMessageUsingThymeleafTemplate(to, subject, templateModel);

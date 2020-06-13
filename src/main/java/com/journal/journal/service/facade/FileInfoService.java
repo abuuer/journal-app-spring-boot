@@ -44,5 +44,8 @@ public interface FileInfoService {
     public ResponseEntity<Resource> getFile(String filename);
     
     ResponseEntity<?> deleteByUrl(String url);
+    
+    int countReviews(int articleId);
+
 
 }

@@ -38,17 +38,18 @@ public class UserSpecialtyDetailImpl implements UserSpecialtyDetailService {
     }
 
     @Override
-    public List<Tag> findTagByUser_Email(String email) {
+    public List<String> findTagByUser_Email(String email) {
         Optional<User> fuser = userService.findByEmail(email);
         if (!fuser.isPresent()) {
             return null;
         } else {
             List<UserSpecialtyDetail> usds = repository.findByUser_Email(email);
             List<Tag> tags = new ArrayList<>();
+            List<String> names = new ArrayList<>();
             for (UserSpecialtyDetail usd : usds) {
-                tags.add(usd.getTag());
+                names.add(usd.getTag().getName());
             }
-            return tags;
+            return names;
         }
 
     }

@@ -30,4 +30,6 @@ public interface UserArticleDetailService {
     
     void delete(UserArticleDetail userArticleDetail);
     
+    int countReviewers(int articleId);
+    
 }
