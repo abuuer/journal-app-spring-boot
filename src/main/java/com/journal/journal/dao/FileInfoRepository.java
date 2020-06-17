@@ -24,7 +24,7 @@ public interface FileInfoRepository extends JpaRepository<FileInfo, Long> {
     
     ResponseEntity<?> deleteByUrl(String url);
     
-    @Query(value = "SELECT COUNT(*) FROM file_info WHERE article = ?", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM file_info WHERE article = ? && type ='review'", nativeQuery = true)
     int countReviews(int articleId);
     
     

@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package com.journal.journal.bean;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import javax.persistence.Entity;
@@ -23,9 +24,11 @@ public class ArticleTagsDetail implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @ManyToOne
+    
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToOne
     private Article article;
+    
     @ManyToOne
     private Tag tag;
 

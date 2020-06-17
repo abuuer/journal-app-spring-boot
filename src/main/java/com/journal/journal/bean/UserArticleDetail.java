@@ -27,6 +27,7 @@ public class UserArticleDetail implements Serializable {
     @JsonIgnore
     private Long id;
     private String userFunction;
+    private int mainAuthorCheck; // 1: main author / 0: co-author / -1: reviewer
     @ManyToOne
     private User user;
     @ManyToOne
@@ -36,11 +37,30 @@ public class UserArticleDetail implements Serializable {
     public UserArticleDetail() {
     }
 
-    public UserArticleDetail(String userFunction, User user, Article article) {
+    public UserArticleDetail(String userFunction, User user, Article article, int mainAuthorCheck) {
         this.userFunction = userFunction;
         this.user = user;
         this.article = article;
+        this.mainAuthorCheck = mainAuthorCheck;
     }
+
+    public String getUserFunction() {
+        return userFunction;
+    }
+
+    public void setUserFunction(String userFunction) {
+        this.userFunction = userFunction;
+    }
+
+    public int getMainAuthorCheck() {
+        return mainAuthorCheck;
+    }
+
+    public void setMainAuthorCheck(int mainAuthorCheck) {
+        this.mainAuthorCheck = mainAuthorCheck;
+    }
+    
+    
 
     public String getFunction() {
         return userFunction;

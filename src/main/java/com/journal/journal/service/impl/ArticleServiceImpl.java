@@ -8,6 +8,7 @@ package com.journal.journal.service.impl;
 import com.journal.journal.bean.Article;
 import com.journal.journal.bean.ArticleTagsDetail;
 import com.journal.journal.bean.FileInfo;
+import com.journal.journal.bean.Issue;
 import com.journal.journal.bean.Tag;
 import com.journal.journal.bean.User;
 import com.journal.journal.bean.UserArticleDetail;
@@ -20,11 +21,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.journal.journal.service.facade.FileInfoService;
+import com.journal.journal.service.facade.IssueService;
 import com.journal.journal.service.facade.TagService;
 import com.journal.journal.service.facade.UserArticleDetailService;
 import com.journal.journal.service.facade.UserService;
 import com.journal.journal.service.facade.UserSpecialtyDetailService;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 
@@ -51,6 +54,8 @@ public class ArticleServiceImpl implements ArticleService {
     private UserArticleDetailService userArticleDetailService;
     @Autowired
     private UserSpecialtyDetailService userSpecialtyDetailService;
+    @Autowired
+    private IssueService issueService;
 
     @Override
     public int save(Article article) {
@@ -71,22 +76,29 @@ public class ArticleServiceImpl implements ArticleService {
             }
             for (ArticleTagsDetail articleTagsDetail : article.getArticleTags()) {
                 Tag tag = tagService.findByName(articleTagsDetail.getTag().getName());
-                tags.add(tag);
                 if (tag == null) {
                     tagService.save(articleTagsDetail.getTag());
+                    tags.add(articleTagsDetail.getTag());
                     ArticleTagsDetail newAT = new ArticleTagsDetail(article, articleTagsDetail.getTag());
                     articleTagsDetailService.save(newAT);
                 } else {
+                    tags.add(tag);
                     ArticleTagsDetail newAT = new ArticleTagsDetail(article, tag);
                     articleTagsDetailService.save(newAT);
                 }
             }
             if (article.getUserArticleDetails() != null) {
-                for (UserArticleDetail userArticleDetail : article.getUserArticleDetails()) {
+                int check = 0;
+                for (UserArticleDetail userArticleDetail : article.getUserArticleDetails()) {  
                     Optional<User> fUser = userService.findByEmail(userArticleDetail.getUser().getEmail());
                     // save user speacialty from article submission
+                    if (fUser.get().getPassword() != null) {
+                        check = 1;
+                    } else {
+                        check = 0;
+                    }
                     if (fUser.isPresent()) {
-                        UserArticleDetail uad = new UserArticleDetail("Author", fUser.get(), article);
+                        UserArticleDetail uad = new UserArticleDetail("Author", fUser.get(), article, check);
                         userArticleDetailService.save(uad);
                         List<String> tagNames = userSpecialtyDetailService.findTagByUser_Email(fUser.get().getEmail());
                         for (Tag tag : tags) {
@@ -101,7 +113,7 @@ public class ArticleServiceImpl implements ArticleService {
                             UserSpecialtyDetail usd = new UserSpecialtyDetail(userArticleDetail.getUser(), tag);
                             userSpecialtyDetailService.save(usd);
                         }
-                        UserArticleDetail uad = new UserArticleDetail("Author", userArticleDetail.getUser(), article);
+                        UserArticleDetail uad = new UserArticleDetail("Author", userArticleDetail.getUser(), article, check);
                         userArticleDetailService.save(uad);
                         userService.save(userArticleDetail.getUser());
                     }
@@ -148,7 +160,7 @@ public class ArticleServiceImpl implements ArticleService {
                     .badRequest()
                     .body(new MessageResponse("Article doesn't exist"));
         } else {
-            UserArticleDetail uad = new UserArticleDetail("Reviewer", freviewer.get(), fArticle);
+            UserArticleDetail uad = new UserArticleDetail("Reviewer", freviewer.get(), fArticle, -1);
             fArticle.setStatus("being reviewed");
             userArticleDetailService.save(uad);
             if (revUad.size() > 5) {
@@ -160,7 +172,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public ResponseEntity<?> dismissReviewer(String articleRef, Long id) {
+    public ResponseEntity<?> dismissReviewer(String articleRef, String email) {
         return ResponseEntity.ok(new MessageResponse("Assigned "));
     }
 
@@ -178,9 +190,53 @@ public class ArticleServiceImpl implements ArticleService {
                     .body(new MessageResponse("Article doesn't exist"));
         } else {
             farticle.setStatus(status);
+            if (status.toLowerCase().equals("accepted")) {
+                farticle.setAcceptDate(new Date());
+            }
             articleRepository.save(farticle);
             return ResponseEntity.ok(new MessageResponse("Status updated to " + status));
         }
+    }
+
+    @Override
+    public ResponseEntity<?> addToIssue(String articleRef, int issueNumber, int volNumber) {
+        Issue fIssue = issueService.findByNumberAndVolume_Number(issueNumber, volNumber);
+        Article fArticle = articleRepository.findByReference(articleRef);
+
+        if (fArticle == null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Article doesn't exist"));
+        } else {
+            if (fIssue == null) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(new MessageResponse("This issue number doesn't exist yet. please create the issue first!"));
+            } else {
+                fArticle.setIssue(fIssue);
+                articleRepository.save(fArticle);
+                return ResponseEntity.ok(new MessageResponse("Article has been added to issue number "
+                        + fIssue.getNumber() + " successfully"));
+            }
+        }
+    }
+
+    @Override
+    public List<Article> findByStatus(String status) {
+        return articleRepository.findByStatus(status);
+    }
+
+    @Override
+    public ResponseEntity<?> deleteArticleFromIssue(String articleRef) {
+        Article fArticle = articleRepository.findByReference(articleRef);
+        fArticle.setIssue(null);
+articleRepository.save(fArticle);
+        return ResponseEntity.ok(new MessageResponse("Deleted article from issue successfully"));
+    }
+
+    @Override
+    public List<Article> findByIssue_Number(int issueNumber) {
+        return articleRepository.findByIssue_Number(issueNumber);
     }
 
 }

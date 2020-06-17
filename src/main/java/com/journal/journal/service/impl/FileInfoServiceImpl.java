@@ -46,7 +46,7 @@ public class FileInfoServiceImpl implements FileInfoService {
 
     @Autowired
     private ArticleService articleService;
-    
+
     @Autowired
     private UserArticleDetailService userArticleDetailService;
 
@@ -153,25 +153,26 @@ public class FileInfoServiceImpl implements FileInfoService {
 
     }
 
-     @Override
+    @Override
     public void save(FileInfo file) {
         FileInfo fFile = fileInfoRepository.findByUrl(file.getUrl());
         Article farticle = articleService.findByReference(file.getArticle().getReference());
-        boolean statusCheck = updateStatus(farticle);
         if (fFile != null && fFile.getArticle() == null) {
             fFile.setArticle(farticle);
             fileInfoRepository.save(fFile);
         } else {
             fileInfoRepository.save(file);
         }
+        boolean statusCheck = updateStatus(farticle);
         if (statusCheck == true) {
-            farticle.setStatus("Reviewed");
-            articleService.save(farticle);
+            articleService.updateStatus(farticle.getReference(), "Reviewed");
         }
     }
 
     private boolean updateStatus(Article article) {
-        return userArticleDetailService.countReviewers(article.getId().intValue())
+        if (userArticleDetailService.countReviewers(article.getId().intValue()) == 0) {
+            return false;
+        } else return userArticleDetailService.countReviewers(article.getId().intValue())
                 == countReviews(article.getId().intValue());
     }
 

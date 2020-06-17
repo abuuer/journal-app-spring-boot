@@ -16,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
 
 /**
  *
@@ -49,6 +50,7 @@ public class User implements Serializable {
     private String instAdress;
     private String instPhone;
     private String availability;
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date registrationDate;
     private boolean verified;
 

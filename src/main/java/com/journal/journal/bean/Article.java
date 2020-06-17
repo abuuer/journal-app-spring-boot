@@ -5,6 +5,7 @@
  */
 package com.journal.journal.bean;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
@@ -14,6 +15,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 
@@ -39,6 +41,8 @@ public class Article implements Serializable {
     private String status;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date submitDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date acceptDate;
 
     @OneToMany(mappedBy = "article")
     private List<FileInfo> fileInfos;
@@ -46,12 +50,34 @@ public class Article implements Serializable {
     @OneToMany(mappedBy = "article")
     private List<UserArticleDetail> userArticleDetails;
 
+    
     @OneToMany(mappedBy = "article")
     private List<ArticleTagsDetail> articleTags;
+
+    @JsonBackReference
+    @ManyToOne
+    private Issue issue;
 
     public Article() {
         this.status = "new";
         this.submitDate = new Date();
+    }
+
+    public Issue getIssue() {
+        return issue;
+    }
+
+    public Date getAcceptDate() {
+        return acceptDate;
+    }
+
+    public void setAcceptDate(Date acceptDate) {
+        this.acceptDate = acceptDate;
+    }
+    
+
+    public void setIssue(Issue issue) {
+        this.issue = issue;
     }
 
     public Long getId() {
@@ -157,7 +183,6 @@ public class Article implements Serializable {
     public void setSubmitDate(Date submitDate) {
         this.submitDate = submitDate;
     }
-    
 
     @Override
     public int hashCode() {

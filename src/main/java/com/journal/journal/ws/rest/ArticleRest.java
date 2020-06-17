@@ -45,17 +45,37 @@ public class ArticleRest {
         return articleService.assignReviewer(articleRef,email);
     }
 
-    @PutMapping("/dismissReviewer/articleRef/{articleRef}/id/{id}")
-    public ResponseEntity<?> dismissReviewer(String articleRef, Long id){
-        return articleService.dismissReviewer(articleRef, id);
+    @PutMapping("/dismissReviewer/articleRef/{articleRef}/email/{email}")
+    public ResponseEntity<?> dismissReviewer(String articleRef, String email){
+        return articleService.dismissReviewer(articleRef, email);
     }
 
     @PutMapping("/updateStatus/articleRef/{articleRef}/status/{status}")
     public ResponseEntity<?> updateStatus(@PathVariable String articleRef,@PathVariable String status) {
         return articleService.updateStatus(articleRef, status);
     }
+
+    @PutMapping("/addToIssue/articleRef/{articleRef}/issueNumber/{issueNumber}")
+    public ResponseEntity<?> addToIssue(@PathVariable String articleRef
+            ,@PathVariable int issueNumber,@PathVariable int volNumber) {
+        return articleService.addToIssue(articleRef, issueNumber, volNumber);
+    }
+
+    @GetMapping("/findByStatus/status/{status}")
+    public List<Article> findByStatus(@PathVariable String status) {
+        return articleService.findByStatus(status);
+    }
+
+    @PutMapping("/deleteArticleFromIssue/articleRef/{articleRef}")
+    public ResponseEntity<?> deleteArticleFromIssue(@PathVariable String articleRef) {
+        return articleService.deleteArticleFromIssue(articleRef);
+    }
+
+    @GetMapping("/findByIssue_Number/issueNumber/{issueNumber}")
+    public List<Article> findByIssue_Number(@PathVariable int issueNumber) {
+        return articleService.findByIssue_Number(issueNumber);
+    }
     
     
-    
-    
+      
 }

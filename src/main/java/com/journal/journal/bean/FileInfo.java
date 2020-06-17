@@ -5,6 +5,7 @@
  */
 package com.journal.journal.bean;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
@@ -31,9 +32,13 @@ public class FileInfo implements Serializable {
     private String reference;
     private String type;
 
-    @ManyToOne
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToOne
     private Article article;
+
+    @JsonBackReference
+    @ManyToOne
+    private Issue issue;
 
     public FileInfo() {
     }
@@ -42,6 +47,14 @@ public class FileInfo implements Serializable {
         this.name = name;
         this.url = url;
         this.type = type;
+    }
+
+    public Issue getIssue() {
+        return issue;
+    }
+
+    public void setIssue(Issue issue) {
+        this.issue = issue;
     }
 
     public String getType() {

@@ -26,6 +26,6 @@ public interface UserArticleDetailRepository extends JpaRepository<UserArticleDe
     @Transactional
     void deleteByUser_EmailAndArticle_Reference(String email, String reference);
  
-    @Query(value = "SELECT COUNT(*) FROM user_article_detail WHERE id = ?", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM user_article_detail WHERE article = ? && user_function = 'Reviewer'", nativeQuery = true)
     int countReviewers(int articleId);
 }

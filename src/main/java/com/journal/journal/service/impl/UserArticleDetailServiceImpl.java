@@ -67,7 +67,7 @@ public class UserArticleDetailServiceImpl implements UserArticleDetailService {
     }
 
     @Override
-    public ResponseEntity<?> eleteByUser_EmailAndArticle_Reference(String email, String reference) {
+    public ResponseEntity<?> deleteByUser_EmailAndArticle_Reference(String email, String reference) {
         Optional<User> fUser = userService.findByEmail(email);
         Article farticle = articleService.findByReference(reference);
         if (!fUser.isPresent()) {

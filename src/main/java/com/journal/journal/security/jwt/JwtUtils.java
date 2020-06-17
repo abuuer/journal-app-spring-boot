@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import io.jsonwebtoken.*;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 /**
  *
@@ -22,11 +23,11 @@ public class JwtUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    
-    private String jwtSecret = "randomSecretKey";
+    @Value("${journal.app.secretKey}")
+    private String jwtSecret;
 
-    
-    private int jwtExpirationMs = 86400000;
+    @Value("${journal.app.expirationMs}")
+    private int jwtExpirationMs;
 
     public String generateJwtToken(Authentication authentication) {
 

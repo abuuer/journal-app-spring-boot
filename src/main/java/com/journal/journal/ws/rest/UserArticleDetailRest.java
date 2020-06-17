@@ -45,7 +45,7 @@ public class UserArticleDetailRest {
 
     @DeleteMapping("/deleteByUserId/email/{email}/articleRef/{reference}")
     public ResponseEntity<?> deleteByUser_EmailAndArticle_Reference(@PathVariable String email,@PathVariable String reference) {
-        return userArticleDetailService.eleteByUser_EmailAndArticle_Reference(email, reference);
+        return userArticleDetailService.deleteByUser_EmailAndArticle_Reference(email, reference);
     }
 
     

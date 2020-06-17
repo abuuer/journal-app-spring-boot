@@ -5,9 +5,10 @@
  */
 package com.journal.journal.dao;
 
-import com.journal.journal.bean.Article;
+import com.journal.journal.bean.Volume;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -15,11 +16,9 @@ import org.springframework.stereotype.Repository;
  * @author anoir
  */
 @Repository
-public interface ArticleRepository extends JpaRepository<Article, Long> {
-
-    Article findByReference(String reference);
-
-    List<Article> findByStatus(String status);
-
-    List<Article> findByIssue_Number(int issueNumber);
+public interface VolumeRepository extends JpaRepository<Volume, Long>{
+    
+    Volume findByNumber(int number);
+    
+    
 }

@@ -32,6 +32,7 @@ public class AccountActivation implements Serializable {
     private String token;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date expiryDate;
+    
     @OneToOne
     @JoinColumn(nullable = false)
     private User user;

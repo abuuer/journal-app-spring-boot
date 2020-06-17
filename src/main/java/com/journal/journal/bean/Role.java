@@ -5,6 +5,7 @@
  */
 package com.journal.journal.bean;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.List;
@@ -37,8 +38,6 @@ public class Role implements Serializable {
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "role")
     private List<UserRoleDetail> userRoleDetails;
 
-    
-    
     public Role() {
     }
 

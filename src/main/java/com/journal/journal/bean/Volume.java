@@ -5,50 +5,41 @@
  */
 package com.journal.journal.bean;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.io.Serializable;
+import java.time.Year;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  *
  * @author anoir
  */
 @Entity
-public class UserSpecialtyDetail implements Serializable {
+public class Volume implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @JsonIgnore
     private Long id;
+    private int number;
+    private Year year;
+   
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne
-    private User user;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "volume")
+    private List<Issue> issues;
 
-    @ManyToOne
-    private Tag tag;
-
-    public UserSpecialtyDetail() {
+    public Volume() {
     }
 
-    public UserSpecialtyDetail(User user, Tag tag) {
-        this.user = user;
-        this.tag = tag;
-    }
-
-    public Tag getTag() {
-        return tag;
-    }
-
-    public void setTag(Tag tag) {
-        this.tag = tag;
+    public Volume(int number,Year year) {
+        this.number = number;
+        this.year = year;
     }
 
     public Long getId() {
@@ -59,12 +50,29 @@ public class UserSpecialtyDetail implements Serializable {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public int getNumber() {
+        return number;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
+
+    public Year getYear() {
+        return year;
+    }
+
+    public void setYear(Year year) {
+        this.year = year;
+    }
+
+    public List<Issue> getIssues() {
+        return issues;
+    }
+
+    public void setIssues(List<Issue> issues) {
+        this.issues = issues;
     }
 
     @Override
@@ -77,10 +85,10 @@ public class UserSpecialtyDetail implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof UserSpecialtyDetail)) {
+        if (!(object instanceof Volume)) {
             return false;
         }
-        UserSpecialtyDetail other = (UserSpecialtyDetail) object;
+        Volume other = (Volume) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -89,7 +97,7 @@ public class UserSpecialtyDetail implements Serializable {
 
     @Override
     public String toString() {
-        return "com.journal.journal.bean.UserSpecialtyDetail[ id=" + id + " ]";
+        return "com.journal.journal.bean.Volume[ id=" + id + " ]";
     }
 
 }

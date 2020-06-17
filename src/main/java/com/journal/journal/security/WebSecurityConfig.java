@@ -69,10 +69,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers("/", "/**", "/journal-api/file/**",
                          "/journal-api/article/**", "/journal-api/user/**", "/journal-api/user-role/**",
                         "/journal-api/test/**").permitAll()
-                .antMatchers("/journal-api/user/author/**")
-                .hasAnyAuthority("ROLE_USER", "ROLE_AUTHOR")
-                .antMatchers("/journal-api/user-article/**")
-                .hasAnyAuthority("ROLE_USER", "ROLE_AUTHOR")
+                .antMatchers("/journal-api/user/author/**","/journal-api/user-article/**")
+                .hasAuthority("ROLE_AUTHOR")
+                .antMatchers("/journal-api/user/editor/**","/journal-api/issue/**")
+                .hasAuthority("ROLE_EDITOR")
+                .antMatchers("/journal-api/user/reviewer/**")
+                .hasAuthority("ROLE_REVIEWER")
                 .anyRequest().authenticated()
                 .and().formLogin().loginPage("/login").defaultSuccessUrl("/");
 
