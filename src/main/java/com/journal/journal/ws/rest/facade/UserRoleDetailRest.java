@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.journal.journal.ws.rest;
+package com.journal.journal.ws.rest.facade;
 
 import com.journal.journal.bean.User;
+import com.journal.journal.bean.UserRoleDetail;
 import com.journal.journal.service.facade.UserRoleDetailService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +28,12 @@ public class UserRoleDetailRest {
     private UserRoleDetailService userRoleDetailService;
 
     @GetMapping("/findAllReviewers")
-    public List<User> findAllReviewers() {
+    public List<UserRoleDetail> findAllReviewers() {
         return userRoleDetailService.findAllReviewers();
     }
 
     @GetMapping("/findAllAuthors")
-    public List<User> findAllAuthors() {
+    public List<UserRoleDetail> findAllAuthors() {
         return userRoleDetailService.findAllAuthors();
     }
 

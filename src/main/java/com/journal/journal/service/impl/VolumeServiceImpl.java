@@ -8,7 +8,7 @@ package com.journal.journal.service.impl;
 import com.journal.journal.bean.Issue;
 import com.journal.journal.bean.Volume;
 import com.journal.journal.dao.VolumeRepository;
-import com.journal.journal.message.ResponseMessage;
+import com.journal.journal.service.util.message.ResponseMessage;
 import com.journal.journal.service.facade.IssueService;
 import com.journal.journal.service.facade.VolumeService;
 import java.util.ArrayList;

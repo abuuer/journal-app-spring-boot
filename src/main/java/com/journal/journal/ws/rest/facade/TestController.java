@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.journal.journal.ws.rest;
+package com.journal.journal.ws.rest.facade;
 
 import com.journal.journal.bean.Tag;
 import com.journal.journal.bean.User;
-import com.journal.journal.email.service.EmailService;
+import com.journal.journal.service.util.email.service.EmailService;
 import com.journal.journal.service.facade.UserSpecialtyDetailService;
 import java.io.IOException;
 import java.util.List;

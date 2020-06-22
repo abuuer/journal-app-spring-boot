@@ -6,7 +6,7 @@
 package com.journal.journal.service.facade;
 
 import com.journal.journal.bean.FileInfo;
-import com.journal.journal.message.ResponseMessage;
+import com.journal.journal.service.util.message.ResponseMessage;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;

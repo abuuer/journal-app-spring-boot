@@ -45,31 +45,31 @@ public class UserRoleDetailServiceImpl implements UserRoleDetailService {
     }
 
     @Override
-    public List<User> findAllReviewers() {
+    public List<UserRoleDetail> findAllReviewers() {
         List<UserRoleDetail> urd = findByRole_Name(ERole.ROLE_REVIEWER);
         if(urd == null){
             return null;
         } else {
-            List<User> users = new ArrayList<>();
+           /* List<User> users = new ArrayList<>();
             urd.forEach((userRoleDetail) -> {
                 users.add(userRoleDetail.getUser());
-            });
-            return users;
+            });*/
+            return urd;
         }
         
     }
 
     @Override 
-    public List<User> findAllAuthors() {
+    public List<UserRoleDetail> findAllAuthors() {
         List<UserRoleDetail> urd = findByRole_Name(ERole.ROLE_AUTHOR);
         if(urd == null){
             return null;
         } else {
-            List<User> users = new ArrayList<>();
+           /* List<User> users = new ArrayList<>();
             urd.forEach((userRoleDetail) -> {
                 users.add(userRoleDetail.getUser());
-            });
-            return users;
+            });*/
+            return urd;
         }
     }
 

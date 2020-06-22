@@ -43,11 +43,11 @@ public class Issue implements Serializable {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "issue")
-    private List<Article> articles;
-
-    @JsonManagedReference
-    @OneToMany(mappedBy = "issue")
     private List<FileInfo> fileInfos;
+
+
+    @OneToMany(mappedBy = "issue")
+    private List<Published> published;
 
     public Issue() {
         this.status = "On Hold";
@@ -62,7 +62,6 @@ public class Issue implements Serializable {
         this.volume = volume;
     }
 
-    
     public String getIssn() {
         return issn;
     }
@@ -125,14 +124,6 @@ public class Issue implements Serializable {
 
     public void setVolume(Volume volume) {
         this.volume = volume;
-    }
-
-    public List<Article> getArticles() {
-        return articles;
-    }
-
-    public void setArticles(List<Article> articles) {
-        this.articles = articles;
     }
 
     public Long getId() {

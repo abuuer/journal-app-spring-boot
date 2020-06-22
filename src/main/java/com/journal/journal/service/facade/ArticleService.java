@@ -27,12 +27,6 @@ public interface ArticleService {
 
     public ResponseEntity<?> updateStatus(String articleRef, String status);
 
-    public ResponseEntity<?> addToIssue(String articleRef, int issueNumber, int volNumber);
-
-    public ResponseEntity<?> deleteArticleFromIssue(String articleRef);
-
     List<Article> findByStatus(String status);
-    
-    List<Article> findByIssue_Number(int issueNumber);
 
 }

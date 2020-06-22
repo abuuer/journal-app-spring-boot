@@ -89,7 +89,7 @@ public class ArticleServiceImpl implements ArticleService {
             }
             if (article.getUserArticleDetails() != null) {
                 int check = 0;
-                for (UserArticleDetail userArticleDetail : article.getUserArticleDetails()) {  
+                for (UserArticleDetail userArticleDetail : article.getUserArticleDetails()) {
                     Optional<User> fUser = userService.findByEmail(userArticleDetail.getUser().getEmail());
                     // save user speacialty from article submission
                     if (fUser.get().getPassword() != null) {
@@ -199,44 +199,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public ResponseEntity<?> addToIssue(String articleRef, int issueNumber, int volNumber) {
-        Issue fIssue = issueService.findByNumberAndVolume_Number(issueNumber, volNumber);
-        Article fArticle = articleRepository.findByReference(articleRef);
-
-        if (fArticle == null) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Article doesn't exist"));
-        } else {
-            if (fIssue == null) {
-                return ResponseEntity
-                        .badRequest()
-                        .body(new MessageResponse("This issue number doesn't exist yet. please create the issue first!"));
-            } else {
-                fArticle.setIssue(fIssue);
-                articleRepository.save(fArticle);
-                return ResponseEntity.ok(new MessageResponse("Article has been added to issue number "
-                        + fIssue.getNumber() + " successfully"));
-            }
-        }
-    }
-
-    @Override
     public List<Article> findByStatus(String status) {
         return articleRepository.findByStatus(status);
-    }
-
-    @Override
-    public ResponseEntity<?> deleteArticleFromIssue(String articleRef) {
-        Article fArticle = articleRepository.findByReference(articleRef);
-        fArticle.setIssue(null);
-articleRepository.save(fArticle);
-        return ResponseEntity.ok(new MessageResponse("Deleted article from issue successfully"));
-    }
-
-    @Override
-    public List<Article> findByIssue_Number(int issueNumber) {
-        return articleRepository.findByIssue_Number(issueNumber);
     }
 
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.journal.journal.ws.rest;
+package com.journal.journal.ws.rest.facade;
 
 import com.journal.journal.bean.Issue;
 import com.journal.journal.bean.Volume;

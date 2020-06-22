@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.journal.journal.ws.rest;
+package com.journal.journal.ws.rest.facade;
 
 import com.journal.journal.bean.FileInfo;
-import com.journal.journal.message.ResponseMessage;
+import com.journal.journal.service.util.message.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.CrossOrigin;

@@ -50,21 +50,12 @@ public class Article implements Serializable {
     @OneToMany(mappedBy = "article")
     private List<UserArticleDetail> userArticleDetails;
 
-    
     @OneToMany(mappedBy = "article")
     private List<ArticleTagsDetail> articleTags;
-
-    @JsonBackReference
-    @ManyToOne
-    private Issue issue;
 
     public Article() {
         this.status = "new";
         this.submitDate = new Date();
-    }
-
-    public Issue getIssue() {
-        return issue;
     }
 
     public Date getAcceptDate() {
@@ -73,11 +64,6 @@ public class Article implements Serializable {
 
     public void setAcceptDate(Date acceptDate) {
         this.acceptDate = acceptDate;
-    }
-    
-
-    public void setIssue(Issue issue) {
-        this.issue = issue;
     }
 
     public Long getId() {

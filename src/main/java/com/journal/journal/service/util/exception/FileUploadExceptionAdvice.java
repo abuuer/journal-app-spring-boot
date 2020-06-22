@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.journal.journal.exception;
+package com.journal.journal.service.util.exception;
 
-import com.journal.journal.message.ResponseMessage;
+import com.journal.journal.service.util.message.ResponseMessage;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 

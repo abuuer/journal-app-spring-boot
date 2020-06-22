@@ -7,7 +7,7 @@ package com.journal.journal.service.impl;
 
 import com.journal.journal.bean.FileInfo;
 import com.journal.journal.dao.FileInfoRepository;
-import com.journal.journal.message.ResponseMessage;
+import com.journal.journal.service.util.message.ResponseMessage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -28,7 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.util.FileSystemUtils;
 import com.journal.journal.service.facade.FileInfoService;
-import com.journal.journal.ws.rest.FileRest;
+import com.journal.journal.ws.rest.facade.FileRest;
 import java.util.Optional;
 import com.journal.journal.service.facade.ArticleService;
 import com.journal.journal.service.facade.UserArticleDetailService;

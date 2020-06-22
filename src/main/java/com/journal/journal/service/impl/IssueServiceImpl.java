@@ -9,7 +9,7 @@ import com.journal.journal.bean.FileInfo;
 import com.journal.journal.bean.Issue;
 import com.journal.journal.bean.Volume;
 import com.journal.journal.dao.IssueRepository;
-import com.journal.journal.message.ResponseMessage;
+import com.journal.journal.service.util.message.ResponseMessage;
 import com.journal.journal.service.facade.FileInfoService;
 import com.journal.journal.service.facade.IssueService;
 import com.journal.journal.service.facade.VolumeService;

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.journal.journal.email.config;
+package com.journal.journal.service.util.email.config;
 
 import java.io.IOException;
 import java.util.Properties;
