@@ -21,5 +21,4 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     List<Article> findByStatus(String status);
 
-    List<Article> findByIssue_Number(int issueNumber);
 }
