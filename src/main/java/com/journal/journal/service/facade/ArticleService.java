@@ -25,7 +25,7 @@ public interface ArticleService {
 
     public ResponseEntity<?> dismissReviewer(String articleRef, String email);
 
-    public ResponseEntity<?> updateStatus(String articleRef, String status);
+    public ResponseEntity<?> updateStatus(String articleRef, String status, String decision);
 
     List<Article> findByStatus(String status);
 

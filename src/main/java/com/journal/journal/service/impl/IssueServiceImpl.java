@@ -7,6 +7,8 @@ package com.journal.journal.service.impl;
 
 import com.journal.journal.bean.FileInfo;
 import com.journal.journal.bean.Issue;
+import com.journal.journal.bean.Published;
+import com.journal.journal.bean.UserArticleDetail;
 import com.journal.journal.bean.Volume;
 import com.journal.journal.dao.IssueRepository;
 import com.journal.journal.service.util.message.ResponseMessage;
@@ -49,16 +51,16 @@ public class IssueServiceImpl implements IssueService {
         } else {
             List<Issue> fIssues = issueRepository.findByVolume_Number(fVolume.getNumber());
             List<Integer> numbers = new ArrayList<>();
-            for (Issue fIssue : fIssues) {
+            fIssues.forEach((fIssue) -> {
                 numbers.add(fIssue.getNumber());
-            }
+            });
             if (numbers.contains(issue.getNumber())) {
                 return ResponseEntity.badRequest().body(new ResponseMessage("This issue has been already created"));
             } else {
-                Issue newIssue = new Issue(issue.getNumber() ,"On hold",
-                       issue.getStartMonth(),  issue.getEndMonth(), issue.getIssn(), fVolume);
+                Issue newIssue = new Issue(issue.getNumber(), "On hold",
+                        issue.getStartMonth(), issue.getEndMonth(), issue.getIssn(), fVolume);
                 issueRepository.save(newIssue);
-                /*for (FileInfo fileInfo : issue.getFileInfos()) { 
+                /* for (FileInfo fileInfo : issue.getFileInfos()) {
                     FileInfo foundedFile = fileService.findByReference(fileInfo.getReference());
                     if (foundedFile == null) {
                         System.out.println("foundedFile == null");
@@ -75,44 +77,100 @@ public class IssueServiceImpl implements IssueService {
 
     @Override
     public List<Issue> findByVolume_Number(int volumeNumber) {
-        return issueRepository.findByVolume_Number(volumeNumber);
+        List<Issue> issues = issueRepository.findByVolume_Number(volumeNumber);
+        issues.forEach((issue) -> {
+            issue.getVolume().setIssues(null);
+            for (Published p : issue.getPublisheds()) {
+                        for (UserArticleDetail urd : p.getArticle().getUserArticleDetails()) {
+                            urd.setArticle(null);
+                            urd.getUser().setUserArticleDetails(null);
+                        }
+                    }
+        });
+        return issues;
     }
 
     @Override
     public List<Issue> findAll() {
-        return issueRepository.findAll();
+        List<Issue> issues = issueRepository.findAll();
+        issues.forEach((issue) -> {
+            issue.getVolume().setIssues(null);
+            for (Published p : issue.getPublisheds()) {
+                        for (UserArticleDetail urd : p.getArticle().getUserArticleDetails()) {
+                            urd.setArticle(null);
+                            urd.getUser().setUserArticleDetails(null);
+                        }
+                    }
+        });
+        return issues;
     }
 
     @Override
     public Issue findByNumberAndVolume_Number(int issNumber, int volNumber) {
-         return issueRepository.findByNumberAndVolume_Number(issNumber, volNumber);
+        Issue i = issueRepository.findByNumberAndVolume_Number(issNumber, volNumber);
+        i.getVolume().setIssues(null);
+        for (Published p : i.getPublisheds()) {
+                        for (UserArticleDetail urd : p.getArticle().getUserArticleDetails()) {
+                            urd.setArticle(null);
+                            urd.getUser().setUserArticleDetails(null);
+                        }
+                    }
+        return i;
     }
 
-    @Override 
+    @Override
     public List<Issue> findAllPublished() {
-        return issueRepository.findAllPublished();
+        List<Issue> issues = issueRepository.findAllPublished();
+        issues.forEach((issue) -> {
+            issue.getVolume().setIssues(null);
+            for (Published p : issue.getPublisheds()) {
+                        for (UserArticleDetail urd : p.getArticle().getUserArticleDetails()) {
+                            urd.setArticle(null);
+                            urd.getUser().setUserArticleDetails(null);
+                        }
+                    }
+        });
+        return issues;
+    }
+
+    @Override
+    public List<Issue> findAllPublishedByVol(int volNum) {
+        List<Issue> issues = issueRepository.findAllPublishedByVol(volNum);
+        issues.forEach((issue) -> {
+            issue.getVolume().setIssues(null);
+            for (Published p : issue.getPublisheds()) {
+                        for (UserArticleDetail urd : p.getArticle().getUserArticleDetails()) {
+                            urd.setArticle(null);
+                            urd.getUser().setUserArticleDetails(null);
+                        }
+                    }
+        });
+        return issues;
+    }
+
+    @Override
+    public Issue findLatestIssue() {
+        Issue i = issueRepository.findLatestIssue();
+        i.getVolume().setIssues(null);
+        for (Published p : i.getPublisheds()) {
+                        for (UserArticleDetail urd : p.getArticle().getUserArticleDetails()) {
+                            urd.setArticle(null);
+                            urd.getUser().setUserArticleDetails(null);
+                        }
+                    }
+        return i;
     }
 
     @Override
     public ResponseEntity<?> publishIssue(int issNumber, int volNumber) {
         Issue fIssue = issueRepository.findByNumberAndVolume_Number(issNumber, volNumber);
-        if(fIssue == null){
+        if (fIssue == null) {
             return ResponseEntity.badRequest().body(new ResponseMessage("Issue doesn't exist"));
-        }else {
+        } else {
             fIssue.setPublishDate(new Date());
             fIssue.setStatus("published");
             issueRepository.save(fIssue);
             return ResponseEntity.ok(new ResponseMessage("Issue published successfully"));
         }
-    }
-
-    @Override
-    public List<Issue> findAllPublishedByVol(int volNum) {
-        return issueRepository.findAllPublishedByVol(volNum);
-    }
-
-    @Override
-    public Issue findLatestIssue() {
-        return issueRepository.findLatestIssue();
     }
 }

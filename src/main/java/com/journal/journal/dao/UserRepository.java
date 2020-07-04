@@ -6,8 +6,6 @@
 package com.journal.journal.dao;
 
 import com.journal.journal.bean.User;
-import com.journal.journal.bean.UserArticleDetail;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

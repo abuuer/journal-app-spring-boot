@@ -22,10 +22,12 @@ public interface UserArticleDetailRepository extends JpaRepository<UserArticleDe
     List<UserArticleDetail> findByUser_Email(String email);
 
     List<UserArticleDetail> findByArticle_Reference(String reference);
-    
+
+    UserArticleDetail findByArticle_ReferenceAndUser_Email(String reference, String email);
+
     @Transactional
     void deleteByUser_EmailAndArticle_Reference(String email, String reference);
- 
+
     @Query(value = "SELECT COUNT(*) FROM user_article_detail WHERE article = ? && user_function = 'Reviewer'", nativeQuery = true)
     int countReviewers(int articleId);
 }

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +31,7 @@ public class PublishedRest {
     @Autowired
     private PublishedService publishedService;
 
-    @PutMapping("/addToIssue/articleRef/{articleRef}/issueNumber/{issueNumber}/volNumber/{volNumber}")
+    @PostMapping("/addToIssue/articleRef/{articleRef}/issueNumber/{issueNumber}/volNumber/{volNumber}")
     public ResponseEntity<?> addToIssue(@PathVariable String articleRef,
             @PathVariable int issueNumber, @PathVariable int volNumber) {
         return publishedService.addToIssue(articleRef, issueNumber, volNumber);

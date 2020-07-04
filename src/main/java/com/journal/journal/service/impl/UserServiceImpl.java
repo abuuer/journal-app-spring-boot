@@ -10,7 +10,6 @@ import com.journal.journal.bean.ERole;
 import com.journal.journal.bean.Role;
 import com.journal.journal.bean.Tag;
 import com.journal.journal.bean.User;
-import com.journal.journal.bean.UserArticleDetail;
 import com.journal.journal.bean.UserDetailsImpl;
 import com.journal.journal.bean.UserRoleDetail;
 import com.journal.journal.bean.UserSpecialtyDetail;
@@ -98,7 +97,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+        Optional<User> user = userRepository.findByEmail(email);
+        user.get().setUserArticleDetails(null);
+        return user;
     }
 
     @Override
@@ -134,7 +135,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             List<String> roles = userDetails.getAuthorities().stream()
                     .map(item -> item.getAuthority())
                     .collect(Collectors.toList());
-
             return ResponseEntity.ok(new JwtResponse(jwt,
                     userDetails.getEmail(),
                     roles));
@@ -299,10 +299,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public ResponseEntity<?> authorToReviewer(String email) {
         Optional<User> fAuthor = userRepository.findByEmail(email);
         List<UserRoleDetail> userRoleDetails = userRoleDetailService.findByUser_Email(email);
+        UserRoleDetail authorRole = userRoleDetailService
+                .findByRole_NameAndUser_Email(ERole.ROLE_AUTHOR, email);
         List<Role> roles = new ArrayList<>();
-        for (UserRoleDetail furd : userRoleDetails) {
+        userRoleDetails.forEach((furd) -> {
             roles.add(furd.getRole());
-        }
+        });
         if (!fAuthor.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Author doesn't exist"));
         } else {
@@ -314,6 +316,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 userRoleDetailService.save(urd);
                 fAuthor.get().setAvailability("Available");
                 userRepository.save(fAuthor.get());
+                userRoleDetailService.delete(authorRole);
                 return ResponseEntity.ok(new MessageResponse(fAuthor.get().getLastName()
                         + " " + fAuthor.get().getFirstName() + " is a reviewer now!"));
             }
@@ -386,7 +389,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             List<Role> roles = new ArrayList<>();
             fRoleDetails.forEach((fRoleDetail) -> {
                 roles.add(fRoleDetail.getRole());
-                if(fRoleDetail.getRole().getName() == ERole.ROLE_REVIEWER){
+                if (fRoleDetail.getRole().getName() == ERole.ROLE_REVIEWER) {
                     fuserRole.setId(fRoleDetail.getId());
                     fuserRole.setRole(fRoleDetail.getRole());
                     fuserRole.setUser(fRoleDetail.getUser());
@@ -396,6 +399,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 return ResponseEntity.badRequest().body(new ResponseMessage("User is not a reviewer"));
             } else {
                 userRoleDetailService.delete(fuserRole);
+                Role authorRole = roleService.findByName(ERole.ROLE_AUTHOR).get();
+                UserRoleDetail urd = new UserRoleDetail(fuser.get(), authorRole);
+                userRoleDetailService.save(urd);
                 return ResponseEntity.ok(new MessageResponse(fuser.get().getLastName()
                         + " " + fuser.get().getFirstName() + " is dismissed as a reviewer"));
             }
@@ -406,14 +412,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public ResponseEntity<?> updateStatus(String email, String status) {
         Optional<User> fuser = userRepository.findByEmail(email);
-        if(!fuser.isPresent()){
+        if (!fuser.isPresent()) {
             return ResponseEntity.badRequest().body(new ResponseMessage("User is not found"));
-        }else if(!status.equals("busy") ||!status.equals("available") ||!status.equals("not available")) {
+        } else if (!status.equals("busy") || !status.equals("available") || !status.equals("not available")) {
             return ResponseEntity.badRequest().body(new ResponseMessage("Status is not valid"));
-        }else {
+        } else {
             fuser.get().setAvailability(status);
             userRepository.save(fuser.get());
-            return ResponseEntity.ok(new MessageResponse("Updates status to " + status));
+            return ResponseEntity.ok(new MessageResponse("Updated status to " + status));
         }
     }
 

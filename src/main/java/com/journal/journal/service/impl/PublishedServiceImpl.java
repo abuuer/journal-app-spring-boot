@@ -13,6 +13,8 @@ import com.journal.journal.security.payload.response.MessageResponse;
 import com.journal.journal.service.facade.ArticleService;
 import com.journal.journal.service.facade.IssueService;
 import com.journal.journal.service.facade.PublishedService;
+import com.journal.journal.service.facade.VolumeService;
+import com.journal.journal.service.util.message.ResponseMessage;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +38,9 @@ public class PublishedServiceImpl implements PublishedService {
     @Autowired
     private IssueService issueService;
 
+    @Autowired
+    private VolumeService volumeService;
+
     @Override
     public ResponseEntity<?> deleteArticleFromIssue(String articleRef) {
         publishedRepositoy.delete(publishedRepositoy.findByArticle_Reference(articleRef));
@@ -56,8 +61,11 @@ public class PublishedServiceImpl implements PublishedService {
     public ResponseEntity<?> addToIssue(String articleRef, int issueNumber, int volNumber) {
         Issue fIssue = issueService.findByNumberAndVolume_Number(issueNumber, volNumber);
         Article fArticle = articleService.findByReference(articleRef);
+        Published fPublished = publishedRepositoy.findByArticle_Reference(articleRef);
 
-        if (fArticle == null) {
+        if (fPublished != null) {
+            return ResponseEntity.badRequest().body(new ResponseMessage("Article already published"));
+        } else if (fArticle == null) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Article doesn't exist"));
@@ -67,7 +75,10 @@ public class PublishedServiceImpl implements PublishedService {
                         .badRequest()
                         .body(new MessageResponse("This issue number doesn't exist yet. please create the issue first!"));
             } else {
+                fArticle.setStatus("Published");
+                articleService.save(fArticle);
                 Published p = new Published(fArticle, fIssue);
+                publishedRepositoy.save(p);
                 return ResponseEntity.ok(new MessageResponse("Article has been added to issue number "
                         + fIssue.getNumber() + " successfully"));
             }
@@ -91,4 +102,27 @@ public class PublishedServiceImpl implements PublishedService {
         return listArticle;
     }
 
+    @Override
+    public ResponseEntity<?> publish(Published published) {
+        Issue fIssue = issueService.findByNumberAndVolume_Number(published.getIssue().getNumber(),
+                published.getIssue().getVolume().getNumber());
+        Article fArticle = articleService.findByReference(published.getArticle().getReference());
+
+        if (fIssue == null) {
+            return ResponseEntity.badRequest().body(new ResponseMessage("Issue doesn't exist"));
+        } else if (fArticle == null) {
+            return ResponseEntity.badRequest().body(new ResponseMessage("Article doesn't exist"));
+        } else {
+            fIssue.setPublishDate(new Date());
+            fArticle.setStatus("Published");
+            articleService.save(fArticle);
+            publishedRepositoy.save(published);
+            return ResponseEntity.ok(new ResponseMessage("Issue published successfully"));
+        }
+    }
+
+    /*
+    
+        
+     */
 }

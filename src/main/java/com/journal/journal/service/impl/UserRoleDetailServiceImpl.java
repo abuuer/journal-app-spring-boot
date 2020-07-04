@@ -7,6 +7,7 @@ package com.journal.journal.service.impl;
 
 import com.journal.journal.bean.ERole;
 import com.journal.journal.bean.User;
+import com.journal.journal.bean.UserArticleDetail;
 import com.journal.journal.bean.UserRoleDetail;
 import com.journal.journal.dao.UserRoleDetailRepository;
 import com.journal.journal.security.payload.response.MessageResponse;
@@ -31,51 +32,54 @@ public class UserRoleDetailServiceImpl implements UserRoleDetailService {
 
     @Autowired
     private UserService userService;
-    
+
     @Override
     public int save(UserRoleDetail userRoleDetail) {
         userRoleDetailRepository.save(userRoleDetail);
         return 1;
     }
 
-
     @Override
     public List<UserRoleDetail> findByRole_Name(ERole name) {
-        return userRoleDetailRepository.findByRole_Name(name);
+        List<UserRoleDetail> urds = userRoleDetailRepository.findByRole_Name(name);
+
+        for (UserRoleDetail userRoleDetail : urds) {
+            for (UserArticleDetail userArticleDetail : userRoleDetail.getUser().getUserArticleDetails()) {
+                userArticleDetail.setUser(null);
+                userArticleDetail.getArticle().setUserArticleDetails(null);
+            }
+        }
+        return urds;
     }
 
     @Override
     public List<UserRoleDetail> findAllReviewers() {
         List<UserRoleDetail> urd = findByRole_Name(ERole.ROLE_REVIEWER);
-        if(urd == null){
+        if (urd == null) {
             return null;
         } else {
-           /* List<User> users = new ArrayList<>();
-            urd.forEach((userRoleDetail) -> {
-                users.add(userRoleDetail.getUser());
-            });*/
             return urd;
         }
-        
+
     }
 
-    @Override 
+    @Override
     public List<UserRoleDetail> findAllAuthors() {
         List<UserRoleDetail> urd = findByRole_Name(ERole.ROLE_AUTHOR);
-        if(urd == null){
+        if (urd == null) {
             return null;
         } else {
-           /* List<User> users = new ArrayList<>();
-            urd.forEach((userRoleDetail) -> {
-                users.add(userRoleDetail.getUser());
-            });*/
             return urd;
         }
     }
 
     @Override
     public List<UserRoleDetail> findByUser_Email(String email) {
-        return userRoleDetailRepository.findByUser_Email(email);
+        List<UserRoleDetail> urds = userRoleDetailRepository.findByUser_Email(email);
+        for (UserRoleDetail userRoleDetail : urds) {
+            userRoleDetail.getUser().setUserArticleDetails(null);
+        }
+        return urds;
     }
 
     @Override
@@ -95,6 +99,13 @@ public class UserRoleDetailServiceImpl implements UserRoleDetailService {
     @Override
     public void delete(UserRoleDetail uerRoleDetail) {
         userRoleDetailRepository.delete(uerRoleDetail);
+    }
+
+    @Override
+    public UserRoleDetail findByRole_NameAndUser_Email(ERole name, String Email) {
+        UserRoleDetail urd = userRoleDetailRepository.findByRole_NameAndUser_Email(name, Email);
+        urd.getUser().setUserArticleDetails(null);
+        return urd;
     }
 
 }

@@ -6,6 +6,8 @@
 package com.journal.journal.service.impl;
 
 import com.journal.journal.bean.Issue;
+import com.journal.journal.bean.Published;
+import com.journal.journal.bean.UserArticleDetail;
 import com.journal.journal.bean.Volume;
 import com.journal.journal.dao.VolumeRepository;
 import com.journal.journal.service.util.message.ResponseMessage;
@@ -39,19 +41,41 @@ public class VolumeServiceImpl implements VolumeService {
         } else {
             Volume nvolume = new Volume(volume.getNumber(), volume.getYear());
             volumeRepository.save(nvolume);
-            return ResponseEntity.ok(new ResponseMessage("Volume (number :" + volume.getNumber()
-                    + ", Year : " + volume.getYear() + ") has been added"));
+            return ResponseEntity.ok(new ResponseMessage("Volume number : " + volume.getNumber()
+                    + ", Year : " + volume.getYear() + " has been added"));
         }
     }
 
     @Override
     public Volume findByNumber(int number) {
-        return volumeRepository.findByNumber(number);
+        Volume v = volumeRepository.findByNumber(number);
+        v.getIssues().forEach((issue) -> {
+            issue.setVolume(null);
+            for (Published p : issue.getPublisheds()) {
+                        for (UserArticleDetail urd : p.getArticle().getUserArticleDetails()) {
+                            urd.setArticle(null);
+                            urd.getUser().setUserArticleDetails(null);
+                        }
+                    }
+        });
+        return v;
     }
 
     @Override
     public List<Volume> findAll() {
-        return volumeRepository.findAll();
+        List<Volume> v = volumeRepository.findAll();
+        v.forEach((volume) -> {
+            volume.getIssues().forEach((issue) -> {
+                issue.setVolume(null);
+                for (Published p : issue.getPublisheds()) {
+                        for (UserArticleDetail urd : p.getArticle().getUserArticleDetails()) {
+                            urd.setArticle(null);
+                            urd.getUser().setUserArticleDetails(null);
+                        }
+                    }
+            });
+        });
+        return v;
     }
 
     @Override
@@ -63,10 +87,18 @@ public class VolumeServiceImpl implements VolumeService {
             List<Issue> newIssues = issueService.findAllPublishedByVol(volume.getId().intValue());
             if (!newIssues.isEmpty()) {
                 volume.setIssues(newIssues);
+                volume.getIssues().forEach((issue) -> {
+                    issue.setVolume(null);
+                    for (Published p : issue.getPublisheds()) {
+                        for (UserArticleDetail urd : p.getArticle().getUserArticleDetails()) {
+                            urd.setArticle(null);
+                            urd.getUser().setUserArticleDetails(null);
+                        }
+                    }
+                });
                 newVolumes.add(volume);
             }
         });
         return newVolumes;
     }
-
 }

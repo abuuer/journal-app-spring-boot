@@ -5,11 +5,9 @@
  */
 package com.journal.journal.bean;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,13 +25,12 @@ public class UserRoleDetail implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
     private Long id;
-    
-    
-    @ManyToOne(fetch = FetchType.EAGER)
-    private User user ;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Role role ;
+    @ManyToOne
+    private User user;
+
+    @ManyToOne
+    private Role role;
 
     public UserRoleDetail() {
     }
@@ -42,7 +39,7 @@ public class UserRoleDetail implements Serializable {
         this.user = user;
         this.role = role;
     }
-     
+
     public Long getId() {
         return id;
     }
@@ -91,5 +88,5 @@ public class UserRoleDetail implements Serializable {
     public String toString() {
         return "com.journal.journal.bean.UserRoleDetail[ id=" + id + " ]";
     }
-    
+
 }

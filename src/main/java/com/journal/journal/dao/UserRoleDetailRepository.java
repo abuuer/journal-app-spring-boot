@@ -20,9 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 public interface UserRoleDetailRepository extends JpaRepository<UserRoleDetail, Long> {
 
     List<UserRoleDetail> findByUser_Email(String email);
-    
+
     List<UserRoleDetail> findByRole_Name(ERole name);
-    
+
+    UserRoleDetail findByRole_NameAndUser_Email(ERole name,String Email);
+
     @Transactional
     void deleteByUser_Email(String email);
 }

@@ -23,11 +23,13 @@ public interface UserRoleDetailService {
     List<UserRoleDetail> findByRole_Name(ERole name);
 
     List<UserRoleDetail> findAllReviewers();
-    
+
     List<UserRoleDetail> findAllAuthors();
-    
+
     ResponseEntity<?> deleteByUser_Email(String email);
-    
+
     void delete(UserRoleDetail uerRoleDetail);
+
+    UserRoleDetail findByRole_NameAndUser_Email(ERole name, String Email);
 
 }

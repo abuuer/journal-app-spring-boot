@@ -26,26 +26,31 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserArticleDetailServiceImpl implements UserArticleDetailService {
-
+    
     @Autowired
     private UserArticleDetailRepository repository;
-
+    
     @Autowired
     private UserService userService;
-
+    
     @Autowired
     private ArticleService articleService;
-
+    
     @Override
     public void save(UserArticleDetail userArticleDetail) {
         repository.save(userArticleDetail);
     }
-
+    
     @Override
     public List<UserArticleDetail> findByArticle_Reference(String reference) {
-        return repository.findByArticle_Reference(reference);
+        List<UserArticleDetail> uads = repository.findByArticle_Reference(reference);
+        for (UserArticleDetail uad : uads) {
+            uad.getArticle().setUserArticleDetails(null);
+            uad.getUser().setUserArticleDetails(null);
+        }
+        return uads;
     }
-
+    
     @Override
     public List<Article> findAllArticlesByReviewer(String email) {
         List<UserArticleDetail> userArticleDetails = repository.findByUser_Email(email);
@@ -53,9 +58,15 @@ public class UserArticleDetailServiceImpl implements UserArticleDetailService {
         userArticleDetails.stream().filter((userArticleDetail) -> (userArticleDetail.getFunction().equals("Reviewer"))).forEachOrdered((userArticleDetail) -> {
             articles.add(userArticleDetail.getArticle());
         });
+        for (Article article : articles) {
+            for (UserArticleDetail userArticleDetail : article.getUserArticleDetails()) {
+                userArticleDetail.setArticle(null);
+                userArticleDetail.getUser().setUserArticleDetails(null);
+            }
+        }
         return articles;
     }
-
+    
     @Override
     public List<Article> findAllArticlesByAuthor(String email) {
         List<UserArticleDetail> userArticleDetails = repository.findByUser_Email(email);
@@ -63,9 +74,15 @@ public class UserArticleDetailServiceImpl implements UserArticleDetailService {
         userArticleDetails.stream().filter((userArticleDetail) -> (userArticleDetail.getFunction().equals("Author"))).forEachOrdered((userArticleDetail) -> {
             articles.add(userArticleDetail.getArticle());
         });
+        for (Article article : articles) {
+            for (UserArticleDetail userArticleDetail : article.getUserArticleDetails()) {
+                userArticleDetail.setArticle(null);
+                userArticleDetail.getUser().setUserArticleDetails(null);
+            }
+        }
         return articles;
     }
-
+    
     @Override
     public ResponseEntity<?> deleteByUser_EmailAndArticle_Reference(String email, String reference) {
         Optional<User> fUser = userService.findByEmail(email);
@@ -83,14 +100,19 @@ public class UserArticleDetailServiceImpl implements UserArticleDetailService {
             return ResponseEntity.ok(new MessageResponse(fUser.get().getFirstName() + " "
                     + fUser.get().getLastName() + " is dismissed"));
         }
-
+        
     }
-
+    
     @Override
     public List<UserArticleDetail> findByUser_Email(String email) {
-        return repository.findByUser_Email(email);
+        List<UserArticleDetail> uads = repository.findByUser_Email(email);
+        for (UserArticleDetail uad : uads) {
+            uad.getArticle().setUserArticleDetails(null);
+            uad.getUser().setUserArticleDetails(null);
+        }
+        return uads;
     }
-
+    
     @Override
     public void delete(UserArticleDetail userArticleDetail) {
         repository.delete(userArticleDetail);
@@ -100,5 +122,25 @@ public class UserArticleDetailServiceImpl implements UserArticleDetailService {
     public int countReviewers(int articleId) {
         return repository.countReviewers(articleId);
     }
-
+    
+    @Override
+    public ResponseEntity<?> updateDecision(String email, String reference, String decision) {
+        Optional<User> fUser = userService.findByEmail(email);
+        Article farticle = articleService.findByReference(reference);
+        UserArticleDetail uad = repository.findByArticle_ReferenceAndUser_Email(reference, email);
+        if (!fUser.isPresent()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("User doesn't exist"));
+        } else if (farticle == null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Article doesn't exist"));
+        } else {
+            uad.setReviewerDecision(decision);
+            repository.save(uad);
+            return ResponseEntity.ok(new MessageResponse("Decision is saved"));
+        }
+    }
+    
 }

@@ -44,7 +44,6 @@ public class UserDetailsImpl implements UserDetails {
         List<GrantedAuthority> authorities = user.getUserRoleDetails().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getRole().getName().name()))
                 .collect(Collectors.toList());
-
         return new UserDetailsImpl(
                 user.getId(),
                 user.getEmail(),
@@ -106,4 +105,10 @@ public class UserDetailsImpl implements UserDetails {
         UserDetailsImpl user = (UserDetailsImpl) o;
         return Objects.equals(id, user.id);
     }
+
+    @Override
+    public String toString() {
+        return "UserDetailsImpl{" + "email=" + email + ", password=" + password + ", authorities=" + authorities + '}';
+    }
+
 }

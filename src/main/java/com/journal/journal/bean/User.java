@@ -59,7 +59,6 @@ public class User implements Serializable {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     private List<UserRoleDetail> userRoleDetails;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(mappedBy = "user")
     private List<UserArticleDetail> userArticleDetails;
     @OneToMany(mappedBy = "user")

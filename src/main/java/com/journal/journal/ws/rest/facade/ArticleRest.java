@@ -51,9 +51,10 @@ public class ArticleRest {
         return articleService.dismissReviewer(articleRef, email);
     }
 
-    @PutMapping("/updateStatus/articleRef/{articleRef}/status/{status}")
-    public ResponseEntity<?> updateStatus(@PathVariable String articleRef, @PathVariable String status) {
-        return articleService.updateStatus(articleRef, status);
+    @PutMapping("/updateStatus/articleRef/{articleRef}/status/{status}/decision/{decision}")
+    public ResponseEntity<?> updateStatus(@PathVariable String articleRef
+            , @PathVariable String status, @PathVariable String decision) {
+        return articleService.updateStatus(articleRef, status, decision);
     }
 
     @GetMapping("/findByStatus/status/{status}")

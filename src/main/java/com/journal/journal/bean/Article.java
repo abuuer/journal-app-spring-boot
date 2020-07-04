@@ -39,6 +39,7 @@ public class Article implements Serializable {
     private String funder;
     private Double amount;
     private String status;
+    private String decision;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date submitDate;
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -56,6 +57,14 @@ public class Article implements Serializable {
     public Article() {
         this.status = "new";
         this.submitDate = new Date();
+    }
+
+    public String getDecision() {
+        return decision;
+    }
+
+    public void setDecision(String decision) {
+        this.decision = decision;
     }
 
     public Date getAcceptDate() {

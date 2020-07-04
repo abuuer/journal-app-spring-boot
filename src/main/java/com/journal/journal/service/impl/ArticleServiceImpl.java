@@ -127,7 +127,14 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<Article> findAll() {
-        return articleRepository.findAll();
+        List<Article> articles = articleRepository.findAll();
+        articles.forEach((article) -> {
+            for (UserArticleDetail userArticleDetail : article.getUserArticleDetails()) {
+                userArticleDetail.setArticle(null);
+                userArticleDetail.getUser().setUserArticleDetails(null);
+            }
+        });
+        return articles;
     }
 
     @Override
@@ -178,11 +185,16 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Article findByReference(String referenece) {
-        return articleRepository.findByReference(referenece);
+        Article a = articleRepository.findByReference(referenece);
+        for (UserArticleDetail uad : a.getUserArticleDetails()) {
+            uad.setArticle(null);
+            uad.getUser().setUserArticleDetails(null);
+        }
+        return a;
     }
 
     @Override
-    public ResponseEntity<?> updateStatus(String articleRef, String status) {
+    public ResponseEntity<?> updateStatus(String articleRef, String status, String decision) {
         Article farticle = articleRepository.findByReference(articleRef);
         if (farticle == null) {
             return ResponseEntity
@@ -190,6 +202,7 @@ public class ArticleServiceImpl implements ArticleService {
                     .body(new MessageResponse("Article doesn't exist"));
         } else {
             farticle.setStatus(status);
+            farticle.setDecision(decision);
             if (status.toLowerCase().equals("accepted")) {
                 farticle.setAcceptDate(new Date());
             }
@@ -200,7 +213,14 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<Article> findByStatus(String status) {
-        return articleRepository.findByStatus(status);
+        List<Article> articles = articleRepository.findByStatus(status);
+        articles.forEach((article) -> {
+            for (UserArticleDetail userArticleDetail : article.getUserArticleDetails()) {
+                userArticleDetail.setArticle(null);
+                userArticleDetail.getUser().setUserArticleDetails(null);
+            }
+        });
+        return articles;
     }
 
 }

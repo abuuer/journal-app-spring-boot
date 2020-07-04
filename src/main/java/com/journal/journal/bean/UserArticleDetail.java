@@ -28,10 +28,11 @@ public class UserArticleDetail implements Serializable {
     private Long id;
     private String userFunction;
     private int mainAuthorCheck; // 1: main author / 0: co-author / -1: reviewer
+    private String reviewerDecision;
     @ManyToOne
     private User user;
+    
     @ManyToOne
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Article article;
 
     public UserArticleDetail() {
@@ -42,6 +43,14 @@ public class UserArticleDetail implements Serializable {
         this.user = user;
         this.article = article;
         this.mainAuthorCheck = mainAuthorCheck;
+    }
+
+    public String getReviewerDecision() {
+        return reviewerDecision;
+    }
+
+    public void setReviewerDecision(String reviewerDecision) {
+        this.reviewerDecision = reviewerDecision;
     }
 
     public String getUserFunction() {
@@ -59,8 +68,6 @@ public class UserArticleDetail implements Serializable {
     public void setMainAuthorCheck(int mainAuthorCheck) {
         this.mainAuthorCheck = mainAuthorCheck;
     }
-    
-    
 
     public String getFunction() {
         return userFunction;

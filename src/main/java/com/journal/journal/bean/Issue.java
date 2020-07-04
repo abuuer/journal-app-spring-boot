@@ -5,8 +5,9 @@
  */
 package com.journal.journal.bean;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -37,17 +38,14 @@ public class Issue implements Serializable {
     private String endMonth;
     private String issn;
 
-    @JsonBackReference
     @ManyToOne
     private Volume volume;
 
-    @JsonManagedReference
+    @OneToMany(mappedBy = "issue")
+    private List<Published> publisheds;
+
     @OneToMany(mappedBy = "issue")
     private List<FileInfo> fileInfos;
-
-
-    @OneToMany(mappedBy = "issue")
-    private List<Published> published;
 
     public Issue() {
         this.status = "On Hold";
@@ -60,6 +58,14 @@ public class Issue implements Serializable {
         this.endMonth = endMonth;
         this.issn = issn;
         this.volume = volume;
+    }
+
+    public List<Published> getPublisheds() {
+        return publisheds;
+    }
+
+    public void setPublisheds(List<Published> publisheds) {
+        this.publisheds = publisheds;
     }
 
     public String getIssn() {

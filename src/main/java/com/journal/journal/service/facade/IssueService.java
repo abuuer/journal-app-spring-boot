@@ -19,7 +19,7 @@ public interface IssueService {
     ResponseEntity<?> save(Issue issue);
     
     Issue findByNumberAndVolume_Number(int issNumber,int volNumber);
-   
+    
     ResponseEntity<?> createNewIssue(Issue issue);
     
     List<Issue> findByVolume_Number(int volumeNumber);

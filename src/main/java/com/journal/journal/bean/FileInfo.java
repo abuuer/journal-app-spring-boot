@@ -36,7 +36,7 @@ public class FileInfo implements Serializable {
     @ManyToOne
     private Article article;
 
-    @JsonBackReference
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne
     private Issue issue;
 

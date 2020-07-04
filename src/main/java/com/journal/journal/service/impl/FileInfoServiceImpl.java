@@ -165,7 +165,7 @@ public class FileInfoServiceImpl implements FileInfoService {
         }
         boolean statusCheck = updateStatus(farticle);
         if (statusCheck == true) {
-            articleService.updateStatus(farticle.getReference(), "Reviewed");
+            articleService.updateStatus(farticle.getReference(), "Reviewed", null);
         }
     }
 

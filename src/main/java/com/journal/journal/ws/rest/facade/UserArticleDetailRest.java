@@ -48,5 +48,9 @@ public class UserArticleDetailRest {
         return userArticleDetailService.deleteByUser_EmailAndArticle_Reference(email, reference);
     }
 
+    public ResponseEntity<?> updateDecision(String email, String reference, String decision) {
+        return userArticleDetailService.updateDecision(email, reference, decision);
+    }
+
     
 }

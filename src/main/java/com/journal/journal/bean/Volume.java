@@ -5,7 +5,6 @@
  */
 package com.journal.journal.bean;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.io.Serializable;
 import java.time.Year;
 import java.util.List;
@@ -29,8 +28,6 @@ public class Volume implements Serializable {
     private int number;
     private Year year;
    
-
-    @JsonManagedReference
     @OneToMany(mappedBy = "volume")
     private List<Issue> issues;
 
@@ -97,7 +94,9 @@ public class Volume implements Serializable {
 
     @Override
     public String toString() {
-        return "com.journal.journal.bean.Volume[ id=" + id + " ]";
+        return "Volume{" + "id=" + id + ", number=" + number + ", year=" + year + '}';
     }
+
+    
 
 }

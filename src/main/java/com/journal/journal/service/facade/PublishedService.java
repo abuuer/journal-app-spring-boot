@@ -21,9 +21,11 @@ public interface PublishedService {
     ResponseEntity<?> addToIssue(String articleRef, int issueNumber, int volNumber);
 
     ResponseEntity<?> deleteArticleFromIssue(String articleRef);
-    
+
     void addClick(String reference);
-    
+
+    ResponseEntity<?> publish(Published published);
+
     List<Article> findMostRead();
 
 }
